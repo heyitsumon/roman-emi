@@ -63,7 +63,9 @@ Route::get('/print-report/{id}', [PrintController::class, 'report'])->name('repo
 Route::get('/users', UsersIndex::class)
 ->name('users.index');
 
-Route::get('/dashboard', Dashboard::class)->name('dashboard')->middleware('auth','role:admin');
+Route::get('/dashboard', Dashboard::class)
+    ->name('dashboard')
+    ->middleware(['auth', 'role:admin']);
 
 
 // Route::get('my-customer', Customer::class);

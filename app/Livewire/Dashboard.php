@@ -36,17 +36,19 @@ class Dashboard extends Component
         $totalLocations = count($locationIds);
         $totalProducts = Product::count();
 
-        // Dashboard accounting: total sales = net_price; profit = net_price - sales_price.
+        // Dashboard accounting: sales are gross sales, while net is the financed cost.
         $purchases = (clone $purchaseQuery)->with('installments.payments')->get();
-        $totalSales = round((float) $purchases->sum('net_price'), 2);
+        $totalSales = round((float) $purchases->sum('sales_price'), 2);
         $totalNet = round((float) $purchases->sum('net_price'), 2);
         $totalDown = round((float) $purchases->sum('down_price'), 2);
         $totalPaid = round((float) $purchases->sum(
-            fn ($purchase) => $purchase->installments->sum('paid_amount') + $purchase->down_price
+            fn ($purchase) => $purchase->installments->sum(
+                fn ($installment) => $installment->payments->sum('amount')
+            ) + $purchase->down_price
         ), 2);
         $totalDue = round(max($totalNet - $totalPaid, 0), 2);
         $totalProfit = round((float) $purchases->sum(
-            fn ($purchase) => (float) $purchase->net_price - (float) $purchase->sales_price
+            fn ($purchase) => (float) $purchase->sales_price - (float) $purchase->net_price
         ), 2);
 
         $periodData = function (string $period) use ($purchases): array {
@@ -61,9 +63,9 @@ class Dashboard extends Component
                 };
             });
 
-            $sales = (float) $periodPurchases->sum('net_price');
+            $sales = (float) $periodPurchases->sum('sales_price');
             $profit = (float) $periodPurchases->sum(
-                fn ($purchase) => (float) $purchase->net_price - (float) $purchase->sales_price
+                fn ($purchase) => (float) $purchase->sales_price - (float) $purchase->net_price
             );
             $downPayments = (float) $periodPurchases->sum('down_price');
             $now = now();
@@ -110,9 +112,9 @@ class Dashboard extends Component
             $annualPurchases = $purchases->filter(
                 fn ($purchase) => $purchase->created_at?->year === $calendarYear
             );
-            $sales = (float) $annualPurchases->sum('net_price');
+            $sales = (float) $annualPurchases->sum('sales_price');
             $profit = (float) $annualPurchases->sum(
-                fn ($purchase) => (float) $purchase->net_price - (float) $purchase->sales_price
+                fn ($purchase) => (float) $purchase->sales_price - (float) $purchase->net_price
             );
             $downPayments = (float) $annualPurchases->sum('down_price');
             $installmentPayments = (float) $purchases->sum(
