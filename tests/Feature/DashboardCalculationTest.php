@@ -19,9 +19,9 @@ class DashboardCalculationTest extends TestCase
             'customer_id' => 1,
             'product_id' => 1,
             'model_id' => 1,
-            'sales_price' => 1000.00,
+            'sales_price' => 800.00,
             'down_price' => 200.00,
-            'net_price' => 800.00,
+            'net_price' => 1000.00,
             'emi_plan' => 4,
         ]);
 
@@ -43,8 +43,8 @@ class DashboardCalculationTest extends TestCase
         $data = app(Dashboard::class)->render()->getData();
 
         $this->assertSame(1000.0, (float) $data['totalSales']);
-        $this->assertSame(800.0, (float) $data['totalNet']);
+        $this->assertSame(1000.0, (float) $data['totalNet']);
         $this->assertSame(200.0, (float) $data['totalProfit']);
-        $this->assertSame(100.0, (float) $data['totalDue']);
+        $this->assertSame(300.0, (float) $data['totalDue']);
     }
 }

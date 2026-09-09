@@ -137,12 +137,12 @@
             <article class="dashboard-card">
                 <div class="dashboard-card__top"><span class="dashboard-label">Total Sales</span><span class="dashboard-icon dashboard-icon--blue">৳</span></div>
                 <div class="dashboard-value">৳ {{ number_format($totalSales, 2) }}</div>
-                <div class="dashboard-caption">Total net price</div>
+                <div class="dashboard-caption">Customer total price</div>
             </article>
             <article class="dashboard-card dashboard-profit">
                 <div class="dashboard-card__top"><span class="dashboard-label">Total Profit</span><span class="dashboard-icon dashboard-icon--teal">+</span></div>
                 <div class="dashboard-value">৳ {{ number_format($totalProfit, 2) }}</div>
-                <div class="dashboard-caption">Net price minus sales price</div>
+                <div class="dashboard-caption">Customer total minus shop cost</div>
             </article>
         </section>
 
