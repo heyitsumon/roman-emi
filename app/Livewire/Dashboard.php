@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Customer;
+use App\Models\InstallmentPayment;
 use App\Models\Product;
 use App\Models\Purchase;
 use Carbon\Carbon;
@@ -37,21 +38,26 @@ class Dashboard extends Component
         $totalProducts = Product::count();
 
         // Dashboard accounting: sales are gross sales, while net is the financed cost.
-        $purchases = (clone $purchaseQuery)->with('installments.payments')->get();
+        $purchases = (clone $purchaseQuery)
+            ->select(['id', 'created_at', 'sales_price', 'down_price', 'net_price'])
+            ->get();
+        $purchaseIds = $purchases->pluck('id');
+        $payments = $purchaseIds->isEmpty()
+            ? collect()
+            : InstallmentPayment::query()
+                ->select(['amount', 'paid_at'])
+                ->whereHas('installment', fn ($query) => $query->whereIn('purchase_id', $purchaseIds))
+                ->get();
         $totalSales = round((float) $purchases->sum('sales_price'), 2);
         $totalNet = round((float) $purchases->sum('net_price'), 2);
         $totalDown = round((float) $purchases->sum('down_price'), 2);
-        $totalPaid = round((float) $purchases->sum(
-            fn ($purchase) => $purchase->installments->sum(
-                fn ($installment) => $installment->payments->sum('amount')
-            ) + $purchase->down_price
-        ), 2);
+        $totalPaid = round((float) $purchases->sum('down_price') + $payments->sum('amount'), 2);
         $totalDue = round(max($totalNet - $totalPaid, 0), 2);
         $totalProfit = round((float) $purchases->sum(
             fn ($purchase) => (float) $purchase->sales_price - (float) $purchase->net_price
         ), 2);
 
-        $periodData = function (string $period) use ($purchases): array {
+        $periodData = function (string $period) use ($purchases, $payments): array {
             $periodPurchases = $purchases->filter(function ($purchase) use ($period): bool {
                 $createdAt = $purchase->created_at;
 
@@ -69,22 +75,18 @@ class Dashboard extends Component
             );
             $downPayments = (float) $periodPurchases->sum('down_price');
             $now = now();
-            $installmentPayments = (float) $purchases->sum(function ($purchase) use ($period, $now): float {
-                return (float) $purchase->installments->sum(function ($installment) use ($period, $now): float {
-                    return (float) $installment->payments
-                        ->filter(function ($payment) use ($period, $now): bool {
-                            $paidAt = Carbon::parse($payment->paid_at);
+            $installmentPayments = (float) $payments
+                ->filter(function ($payment) use ($period, $now): bool {
+                    $paidAt = $payment->paid_at;
 
-                            return match ($period) {
-                                'today' => $paidAt->isToday(),
-                                'month' => $paidAt->isSameMonth($now),
-                                'year' => $paidAt->isSameYear($now),
-                                default => false,
-                            };
-                        })
-                        ->sum('amount');
-                });
-            });
+                    return match ($period) {
+                        'today' => $paidAt->isToday(),
+                        'month' => $paidAt->isSameMonth($now),
+                        'year' => $paidAt->isSameYear($now),
+                        default => false,
+                    };
+                })
+                ->sum('amount');
             $paid = $downPayments + $installmentPayments;
 
             return [
@@ -108,7 +110,7 @@ class Dashboard extends Component
             ->unique()
             ->sortDesc()
             ->values();
-        $annualData = $annualYears->map(function (int $calendarYear) use ($purchases): array {
+        $annualData = $annualYears->map(function (int $calendarYear) use ($purchases, $payments): array {
             $annualPurchases = $purchases->filter(
                 fn ($purchase) => $purchase->created_at?->year === $calendarYear
             );
@@ -117,13 +119,9 @@ class Dashboard extends Component
                 fn ($purchase) => (float) $purchase->sales_price - (float) $purchase->net_price
             );
             $downPayments = (float) $annualPurchases->sum('down_price');
-            $installmentPayments = (float) $purchases->sum(
-                fn ($purchase) => $purchase->installments->sum(
-                    fn ($installment) => $installment->payments
-                        ->filter(fn ($payment) => Carbon::parse($payment->paid_at)->year === $calendarYear)
-                        ->sum('amount')
-                )
-            );
+            $installmentPayments = (float) $payments
+                ->filter(fn ($payment) => $payment->paid_at->year === $calendarYear)
+                ->sum('amount');
             $paid = $downPayments + $installmentPayments;
 
             return [
@@ -134,7 +132,7 @@ class Dashboard extends Component
                 'due' => round(max($sales - $paid, 0), 2),
                 'purchases' => $annualPurchases->count(),
             ];
-        })->all();
+        })->values()->all();
         $availableYears = collect($annualData)->pluck('year')->all();
         if (! in_array($this->selectedYear, $availableYears, true)) {
             $this->selectedYear = $availableYears[0] ?? now()->year;

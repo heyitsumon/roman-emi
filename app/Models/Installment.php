@@ -31,8 +31,9 @@ class Installment extends Model
         return $this->belongsTo(Purchase::class);
     }
     
-    public function payments() {
-        return $this->hasMany(InstallmentPayment::class);
+    public function payments()
+    {
+        return $this->hasMany(InstallmentPayment::class, 'installment_id');
     }
 
     
