@@ -138,11 +138,13 @@
     </div>
 
     {{-- Trash Toggle --}}
-    <div class="flex justify-between items-center mb-4">
-        <button wire:click="toggleTrash" class="btn btn-sm">
-            {{ $showDeleted ? 'Show Active Customers' : 'Show Trash' }}
-        </button>
-    </div>
+    @role('admin')
+        <div class="flex justify-between items-center mb-4">
+            <button wire:click="toggleTrash" class="btn btn-sm">
+                {{ $showDeleted ? 'Show Active Customers' : 'Show Trash' }}
+            </button>
+        </div>
+    @endrole
 
     {{-- Customers Table --}}
     <div class="overflow-x-auto">

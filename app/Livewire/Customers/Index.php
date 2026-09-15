@@ -286,6 +286,8 @@ class Index extends Component
 
     public function toggleTrash(): void
     {
+        abort_unless(auth()->user()->hasRole('admin'), 403);
+
         $this->showDeleted = ! $this->showDeleted;
         $this->resetPage();
     }
