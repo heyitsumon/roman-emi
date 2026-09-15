@@ -6,6 +6,7 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -25,7 +26,7 @@ class UserController extends Controller
 
     public function index()
     {
-        // all user 
+        // all user
         $users = User::orderBy('created_at', 'asc')->paginate(10);
 
         return view('users.index', compact('users'));
@@ -59,6 +60,8 @@ class UserController extends Controller
         ]);
 
         $users->syncRoles($request->roles);
+
+        Artisan::call('permission:cache-reset');
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -103,6 +106,8 @@ class UserController extends Controller
         ]);
 
         $users->syncRoles($request->roles);
+
+        Artisan::call('permission:cache-reset');
 
         return redirect()->route('users.index')->with('success', 'User Updated Successfully!');
     }

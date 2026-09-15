@@ -6,6 +6,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 
 class Index extends Component
@@ -84,6 +86,9 @@ class Index extends Component
 
         $user->syncRoles($this->roles);
 
+        Artisan::call('permission:cache-reset');
+        Cache::flush();
+
         session()->flash('success', 'User Created Successfully');
 
         $this->closeModal();
@@ -123,6 +128,9 @@ class Index extends Component
 
         $user->update($data);
         $user->syncRoles($this->roles);
+
+        Artisan::call('permission:cache-reset');
+        Cache::flush();
 
         session()->flash('success', 'User Updated Successfully');
 

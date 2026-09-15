@@ -6,6 +6,8 @@ use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 
 class Index extends Component
 {
@@ -79,6 +81,9 @@ class Index extends Component
         $role = Role::create(['name' => $this->name]);
         $role->syncPermissions($this->permissions);
 
+        Artisan::call('permission:cache-reset');
+        Cache::flush();
+
         session()->flash('success', 'Role created successfully.');
         $this->resetInput();
     }
@@ -107,6 +112,9 @@ class Index extends Component
 
         $role->update(['name' => $this->name]);
         $role->syncPermissions($this->permissions);
+
+        Artisan::call('permission:cache-reset');
+        Cache::flush();
 
         session()->flash('success', 'Role updated successfully.');
         $this->resetInput();

@@ -10,14 +10,27 @@
             <!-- Center: Desktop Links -->
             <div class="hidden md:flex space-x-4">
                 <a wire:navigate href="{{ route('dashboard') }}" class="btn btn-ghost btn-sm">Dashboard</a>
-                <a wire:navigate href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm">Customers</a>
-                <a wire:navigate href="{{ route('locations.index') }}" class="btn btn-ghost btn-sm">Locations</a>
-                <a href="{{ route('purchases.index') }}" class="btn btn-ghost btn-sm">Purchases</a>
-                <a wire:navigate href="{{ route('products.index') }}" class="btn btn-ghost btn-sm">Products</a>
-                <a wire:navigate href="{{ route('products.model') }}" class="btn btn-ghost btn-sm">Products Model</a>
-                <a wire:navigate href="{{ route('users.index') }}" class="btn btn-ghost btn-sm">Users</a>
-                <a wire:navigate href="{{ route('roles.index') }}" class="btn btn-ghost btn-sm">Roles</a>
-
+                @can('customer-list')
+                    <a wire:navigate href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm">Customers</a>
+                @endcan
+                @can('location-list')
+                    <a wire:navigate href="{{ route('locations.index') }}" class="btn btn-ghost btn-sm">Locations</a>
+                @endcan
+                @can('purchase-list')
+                    <a href="{{ route('purchases.index') }}" class="btn btn-ghost btn-sm">Purchases</a>
+                @endcan
+                @can('product-list')
+                    <a wire:navigate href="{{ route('products.index') }}" class="btn btn-ghost btn-sm">Products</a>
+                @endcan
+                @can('product-model-list')
+                    <a wire:navigate href="{{ route('products.model') }}" class="btn btn-ghost btn-sm">Products Model</a>
+                @endcan
+                @can('user-list')
+                    <a wire:navigate href="{{ route('users.index') }}" class="btn btn-ghost btn-sm">Users</a>
+                @endcan
+                @can('role-list')
+                    <a wire:navigate href="{{ route('roles.index') }}" class="btn btn-ghost btn-sm">Roles</a>
+                @endcan
             </div>
 
 
@@ -38,13 +51,27 @@
     <div id="mobile-menu-content" class="hidden md:hidden">
         <ul class="menu p-2 bg-base-100 space-y-1">
             <li><a wire:navigate href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li><a wire:navigate href="{{ route('customers.index') }}">Customers</a></li>
-            <li><a wire:navigate href="{{ route('locations.index') }}">Locations</a></li>
-            <li><a href="{{ route('purchases.index') }}">Purchases</a></li>
-            <li><a wire:navigate href="{{ route('products.index') }}">Products</a></li>
-            <li><a wire:navigate href="{{ route('products.model') }}">Products Model</a></li>
-            <li><a wire:navigate href="{{ route('users.index') }}">Users</a></li>
-            <li><a wire:navigate href="{{ route('roles.index') }}">Roles</a></li>
+            @can('customer-list')
+                <li><a wire:navigate href="{{ route('customers.index') }}">Customers</a></li>
+            @endcan
+            @can('location-list')
+                <li><a wire:navigate href="{{ route('locations.index') }}">Locations</a></li>
+            @endcan
+            @can('purchase-list')
+                <li><a href="{{ route('purchases.index') }}">Purchases</a></li>
+            @endcan
+            @can('product-list')
+                <li><a wire:navigate href="{{ route('products.index') }}">Products</a></li>
+            @endcan
+            @can('product-model-list')
+                <li><a wire:navigate href="{{ route('products.model') }}">Products Model</a></li>
+            @endcan
+            @can('user-list')
+                <li><a wire:navigate href="{{ route('users.index') }}">Users</a></li>
+            @endcan
+            @can('role-list')
+                <li><a wire:navigate href="{{ route('roles.index') }}">Roles</a></li>
+            @endcan
         </ul>
     </div>
 </nav>

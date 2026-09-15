@@ -126,8 +126,11 @@ class Index extends Component
         $search = trim($this->search);
 
         // Base query
-        $customersQuery = Customer::with('location:id,name')
-            ->whereIn('location_id', auth()->user()->accessibleLocationIds());
+        $locationIds = auth()->user()->accessibleLocationIds();
+        $customersQuery = Customer::with('location:id,name');
+        if (!empty($locationIds)) {
+            $customersQuery->whereIn('location_id', $locationIds);
+        }
 
         // Show trashed or active customers based on toggle
         if ($this->showDeleted) {

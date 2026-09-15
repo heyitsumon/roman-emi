@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -48,6 +49,8 @@ class RoleController extends Controller
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions($request->permissions);
 
+        Artisan::call('permission:cache-reset');
+
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');
     }
 
@@ -85,6 +88,8 @@ class RoleController extends Controller
 
         // Sync the permissions
         $role->syncPermissions($request->permissions);
+
+        Artisan::call('permission:cache-reset');
 
         return redirect()->route('roles.index')->with('success', 'Role update successfully.');
     }
