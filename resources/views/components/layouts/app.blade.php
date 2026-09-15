@@ -17,7 +17,7 @@
 
 <body class="min-h-screen antialiased">
 
-    @include('components.app-loader')
+   
 
     <main>
 
