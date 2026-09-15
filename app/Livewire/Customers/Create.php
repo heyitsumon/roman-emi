@@ -60,6 +60,8 @@ class Create extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()->can($this->editId ? 'customer-edit' : 'customer-create'), 403);
+
         $data = $this->validate();
 
         // Handle image upload

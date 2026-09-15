@@ -3,7 +3,9 @@
     {{-- Header --}}
     <div class="flex justify-between mb-4 items-center">
         <h2 class="text-2xl font-bold">Product Models</h2>
-        <button wire:click="create" class="btn btn-primary btn-sm">+ New Model</button>
+        @can('product-model-create')
+            <button wire:click="create" class="btn btn-primary btn-sm">+ New Model</button>
+        @endcan
     </div>
 
     {{-- Flash Message --}}
@@ -51,11 +53,15 @@
                     <td>{{ number_format($model->total_value, 2) }}</td>
                     <td>{{ $model->purchases_count ?? 0 }}</td>
                     <td class="flex justify-end gap-2">
-                        <button wire:click="edit({{ $model->id }})" class="btn btn-xs btn-warning">Edit</button>
-                        <button wire:click="delete({{ $model->id }})"
-                                onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
-                                class="btn btn-xs btn-error">Delete
-                        </button>
+                        @can('product-model-edit')
+                            <button wire:click="edit({{ $model->id }})" class="btn btn-xs btn-warning">Edit</button>
+                        @endcan
+                        @can('product-model-delete')
+                            <button wire:click="delete({{ $model->id }})"
+                                    onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
+                                    class="btn btn-xs btn-error">Delete
+                            </button>
+                        @endcan
                     </td>
                 </tr>
             @empty

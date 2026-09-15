@@ -1,7 +1,9 @@
 <div class="p-4 max-w-6xl mx-auto">
     <div class="mb-6 flex items-center justify-between gap-4">
         <h1 class="text-2xl font-bold">Purchases</h1>
-        <a href="{{ route('purchases.create') }}" wire:navigate class="btn btn-primary">New Purchase</a>
+        @can('purchase-create')
+            <a href="{{ route('purchases.create') }}" wire:navigate class="btn btn-primary">New Purchase</a>
+        @endcan
     </div>
 
     <input wire:model.live.debounce.300ms="search" type="search" class="input input-bordered mb-6 w-full" placeholder="Search customer or product">
@@ -36,12 +38,16 @@
                         <td>{{ number_format($purchase->down_price, 2) }} ৳</td>
                         <td>{{ $purchase->emi_plan }} মাস</td>
                         <td class="space-x-1">
-                            <a href="{{ route('purchases.edit', $purchase) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form method="POST" action="{{ route('purchases.destroy', $purchase) }}" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-error btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                            </form>
+                            @can('purchase-edit')
+                                <a href="{{ route('purchases.edit', $purchase) }}" class="btn btn-warning btn-sm">Edit</a>
+                            @endcan
+                            @can('purchase-delete')
+                                <form method="POST" action="{{ route('purchases.destroy', $purchase) }}" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-error btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            @endcan
                         </td>
                     </tr>
                 @empty

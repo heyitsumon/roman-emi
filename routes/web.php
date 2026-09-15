@@ -49,7 +49,8 @@ Route::post('/locale', function () {
 
 // routes/web.php
 Route::get('/locations', LocationsIndex::class)
-    ->name('locations.index');
+    ->name('locations.index')
+    ->middleware(['auth', 'permission:location-list|location-create|location-edit|location-delete']);
 
 
 // Print Report
@@ -61,7 +62,8 @@ Route::get('/print-report/{id}', [PrintController::class, 'report'])->name('repo
 
 
 Route::get('/users', UsersIndex::class)
-->name('users.index');
+->name('users.index')
+->middleware(['auth', 'permission:user-list|user-create|user-edit|user-delete']);
 
 Route::get('/dashboard', Dashboard::class)
     ->name('dashboard')
@@ -82,7 +84,7 @@ Route::get('/purchases/create', PurchaseCreate::class)
     ->name('purchases.create')
     ->middleware(['auth', 'permission:purchase-create']);
 Route::resource('purchases', PurchaseController::class)->except(['create', 'store']);
-Route::resource('models', ProductModelController::class);
+Route::resource('models', ProductModelController::class)->middleware('auth');
 
 // Route::get('/purchases', PurchasesIndex::class)->name('purchases.index');
 
@@ -90,13 +92,13 @@ Route::get('pdf', [PurchaseController::class, 'getpdf'])->name('pdf');
 Route::get('/purchases/models/{productId}', [PurchaseController::class, 'getModels'])->name('purchases.models');
 Route::get('/autocomplete', [PurchaseController::class, 'autocomplete'])->name('autocomplete');
 
-Route::resource('installments', InstallmentController::class);
+Route::resource('installments', InstallmentController::class)->middleware('auth');
 
-Route::get('/products', ProductsIndex::class)->name('products.index');
+Route::get('/products', ProductsIndex::class)->name('products.index')->middleware(['auth', 'permission:product-list|product-create|product-edit|product-delete']);
 
-Route::get('/products/models', ModelIndex::class)->name('products.model');
+Route::get('/products/models', ModelIndex::class)->name('products.model')->middleware(['auth', 'permission:product-model-list|product-model-create|product-model-edit|product-model-delete']);
 
-Route::get('/roles', RolesIndex::class)->name('roles.index');
+Route::get('/roles', RolesIndex::class)->name('roles.index')->middleware(['auth', 'permission:role-list|role-create|role-edit|role-delete']);
 
 Route::post('/installments/pay-multiple', [InstallmentController::class, 'payMultiple'])->name('installments.pay-multiple');
 

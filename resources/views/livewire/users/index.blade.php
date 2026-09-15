@@ -2,7 +2,9 @@
 
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold">User Management</h2>
-        <button class="btn btn-primary" wire:click="create">+ New User</button>
+        @can('user-create')
+            <button class="btn btn-primary" wire:click="create">+ New User</button>
+        @endcan
     </div>
 
     @if(session()->has('success'))
@@ -34,12 +36,16 @@
                         @endforeach
                     </td>
                     <td class="flex gap-2">
-                        <button class="btn btn-sm btn-warning" wire:click="edit({{ $user->id }})">Edit</button>
-                        <button class="btn btn-sm btn-error"
-                                onclick="confirm('Are you sure to delete this user?') || event.stopImmediatePropagation()"
-                                wire:click="delete({{ $user->id }})">
-                            Delete
-                        </button>
+                        @can('user-edit')
+                            <button class="btn btn-sm btn-warning" wire:click="edit({{ $user->id }})">Edit</button>
+                        @endcan
+                        @can('user-delete')
+                            <button class="btn btn-sm btn-error"
+                                    onclick="confirm('Are you sure to delete this user?') || event.stopImmediatePropagation()"
+                                    wire:click="delete({{ $user->id }})">
+                                Delete
+                            </button>
+                        @endcan
                     </td>
                 </tr>
                 @endforeach

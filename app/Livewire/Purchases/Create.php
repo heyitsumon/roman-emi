@@ -63,6 +63,8 @@ class Create extends Component
 
     public function store()
     {
+        abort_unless(auth()->user()->can('purchase-create'), 403);
+
         $data = $this->validate();
 
         try {

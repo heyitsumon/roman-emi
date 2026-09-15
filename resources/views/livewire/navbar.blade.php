@@ -108,6 +108,38 @@
                     </a>
                 </li>
             @endcan
+            @can('product-list')
+                <li>
+                    <a wire:navigate href="{{ route('products.index') }}" wire:click="$set('currentRoute','products.index')"
+                       class="{{ $currentRoute == 'products.index' ? 'bg-primary text-white rounded-lg px-2 py-1' : '' }}">
+                       Products
+                    </a>
+                </li>
+            @endcan
+            @can('product-model-list')
+                <li>
+                    <a wire:navigate href="{{ route('products.model') }}" wire:click="$set('currentRoute','products.model')"
+                       class="{{ $currentRoute == 'products.model' ? 'bg-primary text-white rounded-lg px-2 py-1' : '' }}">
+                       Product Models
+                    </a>
+                </li>
+            @endcan
+            @can('user-list')
+                <li>
+                    <a wire:navigate href="{{ route('users.index') }}" wire:click="$set('currentRoute','users.index')"
+                       class="{{ $currentRoute == 'users.index' ? 'bg-primary text-white rounded-lg px-2 py-1' : '' }}">
+                       Users
+                    </a>
+                </li>
+            @endcan
+            @can('role-list')
+                <li>
+                    <a wire:navigate href="{{ route('roles.index') }}" wire:click="$set('currentRoute','roles.index')"
+                       class="{{ $currentRoute == 'roles.index' ? 'bg-primary text-white rounded-lg px-2 py-1' : '' }}">
+                       Roles
+                    </a>
+                </li>
+            @endcan
             <li>
                 <select wire:model.live="locale" wire:change="switchLocale($event.target.value)" class="select select-bordered w-full" aria-label="{{ __('ui.language') }}">
                     <option value="en">{{ __('ui.english') }}</option>

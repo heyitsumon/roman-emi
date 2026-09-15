@@ -114,13 +114,15 @@
             @endif
         </div>
 
-        <button wire:click="create" class="btn btn-primary shadow-lg shadow-primary/20">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            New Customer
-        </button>
+        @can('customer-create')
+            <button wire:click="create" class="btn btn-primary shadow-lg shadow-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                New Customer
+            </button>
+        @endcan
 
         @role('admin')
             <button wire:click="exportExcel" wire:loading.attr="disabled" class="btn btn-success">
@@ -203,17 +205,25 @@
                         </td>
                         <td class="flex gap-1">
                             @if ($customer->trashed())
-                                <button wire:click="restore({{ $customer->id }})"
-                                    class="btn btn-xs btn-success">Restore</button>
-                                <button wire:click="forceDelete({{ $customer->id }})"
-                                    wire:confirm="Permanently delete this customer?"
-                                    class="btn btn-xs btn-error">Delete Permanently</button>
+                                @can('customer-edit')
+                                    <button wire:click="restore({{ $customer->id }})"
+                                        class="btn btn-xs btn-success">Restore</button>
+                                @endcan
+                                @can('customer-delete')
+                                    <button wire:click="forceDelete({{ $customer->id }})"
+                                        wire:confirm="Permanently delete this customer?"
+                                        class="btn btn-xs btn-error">Delete Permanently</button>
+                                @endcan
                             @else
-                                <button wire:click="edit({{ $customer->id }})"
-                                    class="btn btn-xs btn-warning">Edit</button>
-                                <button wire:click="delete({{ $customer->id }})"
-                                    wire:confirm="Move this customer to trash?"
-                                    class="btn btn-xs btn-error">Delete</button>
+                                @can('customer-edit')
+                                    <button wire:click="edit({{ $customer->id }})"
+                                        class="btn btn-xs btn-warning">Edit</button>
+                                @endcan
+                                @can('customer-delete')
+                                    <button wire:click="delete({{ $customer->id }})"
+                                        wire:confirm="Move this customer to trash?"
+                                        class="btn btn-xs btn-error">Delete</button>
+                                @endcan
                             @endif
                         </td>
                     </tr>

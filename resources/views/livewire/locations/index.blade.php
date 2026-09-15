@@ -17,6 +17,7 @@
     @endif
 
     <!-- Form Card -->
+    @canany(['location-create', 'location-edit'])
     <div class="card bg-base-100 shadow p-4 mb-6">
         <form wire:submit.prevent="{{ $isEdit ? 'update' : 'store' }}">
             <div class="form-control mb-3">
@@ -41,6 +42,7 @@
             </div>
         </form>
     </div>
+    @endcanany
     <!-- Table Card -->
     <div class="card bg-base-100 shadow">
         <div class="overflow-x-auto">
@@ -58,12 +60,16 @@
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $location->name }}</td>
                             <td class="text-right flex justify-end gap-2">
-                                <button wire:click="edit({{ $location->id }})"
-                                        class="btn btn-sm btn-warning">{{ __('ui.edit') }}</button>
+                                @can('location-edit')
+                                    <button wire:click="edit({{ $location->id }})"
+                                            class="btn btn-sm btn-warning">{{ __('ui.edit') }}</button>
+                                @endcan
 
-                                <button wire:click="delete({{ $location->id }})"
-                                        onclick="confirm('Are you sure to delete this location?') || event.stopImmediatePropagation()"
-                                        class="btn btn-sm btn-error">{{ __('ui.delete') }}</button>
+                                @can('location-delete')
+                                    <button wire:click="delete({{ $location->id }})"
+                                            onclick="confirm('Are you sure to delete this location?') || event.stopImmediatePropagation()"
+                                            class="btn btn-sm btn-error">{{ __('ui.delete') }}</button>
+                                @endcan
                             </td>
                         </tr>
                     @empty

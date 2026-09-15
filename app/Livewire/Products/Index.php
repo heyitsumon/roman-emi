@@ -39,6 +39,8 @@ class Index extends Component
     // Open modal
     public function create()
     {
+        abort_unless(auth()->user()->can('product-create'), 403);
+
         $this->resetInputFields();
         $this->openModal();
     }
@@ -64,6 +66,8 @@ class Index extends Component
     // Store product
     public function store()
     {
+        abort_unless(auth()->user()->can('product-create'), 403);
+
         $this->validate();
 
         Product::create([
@@ -77,6 +81,8 @@ class Index extends Component
     // Edit product
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('product-edit'), 403);
+
         $product = Product::findOrFail($id);
         $this->product_id = $id;
         $this->product_name = $product->product_name;
@@ -87,6 +93,8 @@ class Index extends Component
     // Update product
     public function update()
     {
+        abort_unless(auth()->user()->can('product-edit'), 403);
+
         $this->validate();
 
         if ($this->product_id) {
@@ -103,6 +111,8 @@ class Index extends Component
     // Delete product
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('product-delete'), 403);
+
         Product::find($id)->delete();
         session()->flash('error', 'Product deleted successfully.');
     }

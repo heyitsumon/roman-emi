@@ -46,6 +46,8 @@ class Index extends Component
 
     public function create()
     {
+        abort_unless(auth()->user()->can('role-create'), 403);
+
         $this->resetInput();
         $this->openModal();
     }
@@ -70,6 +72,8 @@ class Index extends Component
 
     public function store()
     {
+        abort_unless(auth()->user()->can('role-create'), 403);
+
         $this->validate();
 
         $role = Role::create(['name' => $this->name]);
@@ -81,6 +85,8 @@ class Index extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('role-edit'), 403);
+
         $role = Role::findOrFail($id);
         $this->role_id = $id;
         $this->name = $role->name;
@@ -90,6 +96,8 @@ class Index extends Component
 
     public function update()
     {
+        abort_unless(auth()->user()->can('role-edit'), 403);
+
         $role = Role::findOrFail($this->role_id);
 
         $this->validate([
@@ -106,6 +114,8 @@ class Index extends Component
 
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('role-delete'), 403);
+
         Role::findOrFail($id)->delete();
         session()->flash('error', 'Role deleted successfully.');
     }

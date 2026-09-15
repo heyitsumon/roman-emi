@@ -45,6 +45,8 @@ class Index extends Component
 
     public function create()
     {
+        abort_unless(auth()->user()->can('user-create'), 403);
+
         $this->resetInput();
         $this->openModal();
     }
@@ -70,6 +72,8 @@ class Index extends Component
 
     public function store()
     {
+        abort_unless(auth()->user()->can('user-create'), 403);
+
         $this->validate();
 
         $user = User::create([
@@ -88,6 +92,8 @@ class Index extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('user-edit'), 403);
+
         $user = User::findOrFail($id);
 
         $this->user_id = $id;
@@ -100,6 +106,8 @@ class Index extends Component
 
     public function update()
     {
+        abort_unless(auth()->user()->can('user-edit'), 403);
+
         $this->validate();
 
         $user = User::findOrFail($this->user_id);
@@ -124,6 +132,8 @@ class Index extends Component
 
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('user-delete'), 403);
+
         User::findOrFail($id)->delete();
         session()->flash('success', 'User Deleted Successfully');
     }

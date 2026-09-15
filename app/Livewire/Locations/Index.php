@@ -24,6 +24,8 @@ class Index extends Component
 
     public function store()
     {
+        abort_unless(auth()->user()->can('location-create'), 403);
+
         $this->validate();
 
         $location = Location::create([
@@ -39,6 +41,8 @@ class Index extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('location-edit'), 403);
+
         $location = $this->accessibleLocations()->findOrFail($id);
 
         $this->locationId = $id;
@@ -48,6 +52,8 @@ class Index extends Component
 
     public function update()
     {
+        abort_unless(auth()->user()->can('location-edit'), 403);
+
         $this->validate();
 
         $this->accessibleLocations()->whereKey($this->locationId)->update([
@@ -61,6 +67,8 @@ class Index extends Component
 
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('location-delete'), 403);
+
         $this->accessibleLocations()->findOrFail($id)->delete();
         $this->resetPage(); // fix pagination bug
 

@@ -59,6 +59,8 @@ class Index extends Component
 
     public function create()
     {
+        abort_unless(auth()->user()->can('product-model-create'), 403);
+
         $this->resetInputFields();
         $this->openModal();
     }
@@ -85,6 +87,8 @@ class Index extends Component
 
     public function store()
     {
+        abort_unless(auth()->user()->can('product-model-create'), 403);
+
         $this->validate();
 
         ProductModel::create([
@@ -100,6 +104,8 @@ class Index extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('product-model-edit'), 403);
+
         $model = ProductModel::findOrFail($id);
         $this->model_id = $id;
         $this->product_id = $model->product_id;
@@ -112,6 +118,8 @@ class Index extends Component
 
     public function update()
     {
+        abort_unless(auth()->user()->can('product-model-edit'), 403);
+
         $this->validate();
 
         if ($this->model_id) {
@@ -137,6 +145,8 @@ class Index extends Component
 
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('product-model-delete'), 403);
+
         ProductModel::find($id)->delete();
         session()->flash('error', 'Product model deleted successfully.');
     }

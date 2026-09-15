@@ -98,12 +98,16 @@ class Index extends Component
 
     public function create()
     {
+        abort_unless(auth()->user()->can('customer-create'), 403);
+
         $this->resetInputFields();
         $this->isOpen = true;
     }
 
     public function openAddForm()
     {
+        abort_unless(auth()->user()->can('customer-create'), 403);
+
         $this->resetInputFields();
         $this->isOpen = true;
     }
@@ -180,6 +184,8 @@ class Index extends Component
 
     public function store()
     {
+        abort_unless(auth()->user()->can('customer-create'), 403);
+
         $this->validate();
 
         $imagePath = $this->customer_image
@@ -208,6 +214,8 @@ class Index extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('customer-edit'), 403);
+
         $customer = $this->accessibleCustomers()->findOrFail($id);
 
         $this->customer_primary_id = $customer->id;
@@ -227,6 +235,8 @@ class Index extends Component
 
     public function update()
     {
+        abort_unless(auth()->user()->can('customer-edit'), 403);
+
         $this->validate();
 
         $customer = $this->accessibleCustomers()->findOrFail($this->customer_primary_id);
@@ -263,6 +273,8 @@ class Index extends Component
     // Soft Delete (active customer)
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('customer-delete'), 403);
+
         $customer = $this->accessibleCustomers()->findOrFail($id); // Only active
         $customer->delete();
         sweetalert()->success('Customer soft deleted successfully.');
@@ -278,6 +290,7 @@ class Index extends Component
     // Restore (only trashed customer)
     public function restore($id)
     {
+        abort_unless(auth()->user()->can('customer-edit'), 403);
         $customer = $this->accessibleCustomers()->onlyTrashed()->findOrFail($id);
         $customer->restore();
         sweetalert()->success('Customer restored successfully.');
@@ -287,6 +300,7 @@ class Index extends Component
     // Force Delete (only trashed customer)
     public function forceDelete($id)
     {
+        abort_unless(auth()->user()->can('customer-delete'), 403);
         $customer = $this->accessibleCustomers()->onlyTrashed()->findOrFail($id);
 
         // Delete image from storage if exists

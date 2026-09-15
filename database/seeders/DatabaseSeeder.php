@@ -78,6 +78,13 @@ class DatabaseSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
+        // Create the admin role with every permission and assign it to the first user.
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole->syncPermissions(Permission::all());
+
+        if ($admin = User::first()) {
+            $admin->assignRole('admin');
+        }
 
         // $permissions = [
             
