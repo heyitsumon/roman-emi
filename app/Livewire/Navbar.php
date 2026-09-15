@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Location;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class Navbar extends Component
 {
@@ -45,6 +47,14 @@ class Navbar extends Component
         $this->locale = $locale;
         app()->setLocale($locale);
         $this->redirect(url()->current(), navigate: true);
+    }
+
+    public function logout(): void
+    {
+        Auth::logout();
+        Session::invalidate();
+        Session::regenerateToken();
+        $this->redirect('/login', navigate: true);
     }
 
     public function render()

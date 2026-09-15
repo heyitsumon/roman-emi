@@ -67,6 +67,11 @@
                     <option value="en">{{ __('ui.english') }}</option>
                     <option value="bn">{{ __('ui.bangla') }}</option>
                 </select>
+                @can('user-list')
+                    <button wire:click="logout" wire:confirm="Are you sure you want to logout?" class="btn btn-sm btn-ghost text-error">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                @endcan
             </div>
 
             <!-- Mobile Menu Button -->
@@ -146,6 +151,13 @@
                     <option value="bn">{{ __('ui.bangla') }}</option>
                 </select>
             </li>
+            @can('user-list')
+                <li>
+                    <button wire:click="logout" wire:confirm="Are you sure you want to logout?" class="btn btn-sm btn-ghost text-error w-full justify-start">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </button>
+                </li>
+            @endcan
         </ul>
     </div>
 </nav>

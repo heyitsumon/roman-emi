@@ -189,11 +189,16 @@
                         <td>{{ $customer->landlord_name }}</td>
                         <td>{{ $customer->location->name ?? '-' }}</td>
                         <td>
-                            @if ($customer->customer_image)
+                            @if ($customer->customer_image && file_exists(public_path('storage/' . $customer->customer_image)))
                                 <img src="{{ asset('storage/' . $customer->customer_image) }}"
                                     alt="{{ $customer->customer_name }}"
                                     class="w-14 h-14 rounded-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200 shadow-sm"
                                     loading="lazy" wire:click="openModal({{ $customer->id }})" />
+                            @else
+                                <div class="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 shadow-sm"
+                                    wire:click="openModal({{ $customer->id }})">
+                                    <span class="text-gray-500 text-lg font-bold">{{ substr($customer->customer_name, 0, 1) }}</span>
+                                </div>
                             @endif
                         </td>
                         <td>
@@ -284,7 +289,7 @@
 
                     {{-- Right Image --}}
                     <div class="flex w-full justify-center md:justify-end">
-                        @if ($viewCustomerData->customer_image)
+                        @if ($viewCustomerData->customer_image && file_exists(public_path('storage/' . $viewCustomerData->customer_image)))
                             <div
                                 class="rounded-3xl overflow-hidden w-44 h-44 hover:shadow-xl transition-shadow duration-300">
                                 <img loading="lazy" src="{{ asset('storage/' . $viewCustomerData->customer_image) }}"
@@ -294,7 +299,7 @@
                         @else
                             <div
                                 class="w-56 h-56 flex items-center justify-center bg-base-200 rounded-3xl text-gray-400">
-                                No Image
+                                {{ substr($viewCustomerData->customer_name, 0, 1) }}
                             </div>
                         @endif
                     </div>
