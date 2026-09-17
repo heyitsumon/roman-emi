@@ -30,7 +30,7 @@
                     <tr class="bg-primary text-primary-content">
                         <th>তারিখ</th>
                         <th>পণ্য</th>
-                        <th>মূল্য bangladesh</th>
+                        <th>মূল্য bangladesh4</th>
                         <th>জমা</th>
                         <th>বাকি</th>
                         <th>কিস্তি</th>
