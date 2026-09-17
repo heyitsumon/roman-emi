@@ -447,11 +447,6 @@
             <!-- Logo -->
 
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-
-                <span class="brand-icon">
-                    <i class="bi bi-shop"></i>
-                </span>
-
                 <span class="brand-text">
                     Roman EMI
                     <small class="brand-subtitle">
@@ -473,8 +468,6 @@
                 aria-expanded="false"
                 aria-label="Toggle navigation">
 
-                <i class="bi bi-list fs-4"></i>
-
             </button>
 
 
@@ -483,38 +476,6 @@
             <div class="collapse navbar-collapse" id="mainNavbar">
 
                 <ul class="navbar-nav ms-auto align-items-lg-center">
-
-
-                    <!-- Language -->
-
-                    <li class="nav-item language-wrapper">
-
-                        <form method="POST" action="{{ route('locale.switch') }}">
-
-                            @csrf
-
-                            <select
-                                name="locale"
-                                class="form-select language-select"
-                                onchange="this.form.submit()"
-                                aria-label="{{ __('ui.language') }}">
-
-                                <option value="en"
-                                    @selected(app()->getLocale() === 'en')>
-                                    🇬🇧 {{ __('ui.english') }}
-                                </option>
-
-                                <option value="bn"
-                                    @selected(app()->getLocale() === 'bn')>
-                                    🇧🇩 {{ __('ui.bangla') }}
-                                </option>
-
-                            </select>
-
-                        </form>
-
-                    </li>
-
 
                     <!-- Dashboard -->
 
