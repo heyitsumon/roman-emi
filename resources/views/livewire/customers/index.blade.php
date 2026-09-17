@@ -1,4 +1,3 @@
-
 <div class="max-w-7xl mx-auto p-6">
 
     {{-- Flash Message --}}
@@ -8,276 +7,148 @@
         </div>
     @endif
 
-    {{-- Add / Edit Customer Modal --}}
+
+
+
+    {{-- Modal --}}
     @if ($isOpen)
         <div class="modal modal-open">
             <div class="modal-box max-w-md rounded-2xl p-6 overflow-hidden">
-
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">
-                    {{ $updateMode ? 'Edit Customer' : 'Add Customer' }}
+                {{-- Header --}}
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ $updateMode ? 'Edit Customer' : 'Add Customer' }}
                 </h2>
 
-                <form wire:submit.prevent="{{ $updateMode ? 'update' : 'store' }}" class="space-y-4">
-
+                <form class="space-y-4">
                     {{-- Name & Customer ID --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                         <div>
-                            <input type="text"
-                                wire:model="customer_name"
-                                placeholder="Name"
+                            <input type="text" wire:model="customer_name" placeholder="Name"
                                 class="input input-bordered w-full @error('customer_name') input-error @enderror">
-
                             @error('customer_name')
                                 <span class="text-error text-xs mt-1">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div>
-                            <input type="text"
-                                wire:model="customer_id"
-                                placeholder="Customer ID"
+                            <input type="text" wire:model="customer_id" placeholder="Customer ID"
                                 class="input input-bordered w-full @error('customer_id') input-error @enderror">
-
                             @error('customer_id')
                                 <span class="text-error text-xs mt-1">{{ $message }}</span>
                             @enderror
                         </div>
-
                     </div>
 
                     {{-- Phones --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                         <div>
-                            <input type="text"
-                                wire:model="customer_phone"
-                                placeholder="Phone"
+                            <input type="text" wire:model="customer_phone" placeholder="Phone"
                                 class="input input-bordered w-full @error('customer_phone') input-error @enderror">
-
                             @error('customer_phone')
                                 <span class="text-error text-xs mt-1">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div>
-                            <input type="text"
-                                wire:model="customer_phone2"
-                                placeholder="Phone 2 (optional)"
+                            <input type="text" wire:model="customer_phone2" placeholder="Phone 2 (optional)"
                                 class="input input-bordered w-full">
                         </div>
-
                     </div>
 
                     {{-- Landlord & Location --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                        <input type="text"
-                            wire:model="landlord_name"
-                            placeholder="Landlord Name (optional)"
+                        <input type="text" wire:model="landlord_name" placeholder="Landlord Name (optional)"
                             class="input input-bordered w-full">
-
                         <div>
                             <select wire:model="location_id"
                                 class="select select-bordered w-full @error('location_id') select-error @enderror">
-
                                 <option value="">Select Location</option>
-
                                 @foreach ($locations as $location)
-                                    <option value="{{ $location->id }}">
-                                        {{ $location->name }}
-                                    </option>
+                                    <option value="{{ $location->id }}">{{ $location->name }}</option>
                                 @endforeach
-
                             </select>
-
                             @error('location_id')
                                 <span class="text-error text-xs mt-1">{{ $message }}</span>
                             @enderror
                         </div>
-
                     </div>
 
                     {{-- Location Details --}}
-                    <input type="text"
-                        wire:model="location_details"
-                        placeholder="Location Details (optional)"
+                    <input type="text" wire:model="location_details" placeholder="Location Details (optional)"
                         class="input input-bordered w-full">
 
-                    {{-- Customer Image --}}
-                    <div>
-
-                        <label class="block text-sm font-semibold mb-2">
-                            Customer Image
-                        </label>
-
-                        <input type="file"
-                            wire:model="customer_image"
-                            class="file-input file-input-bordered w-full"
+                    {{-- File Upload & Preview --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        <input type="file" wire:model="customer_image" class="file-input file-input-bordered w-full"
                             accept="image/*">
-
-                        @error('customer_image')
-                            <span class="text-error text-xs mt-1 block">
-                                {{ $message }}
-                            </span>
-                        @enderror
-
-                        {{-- New Image Preview --}}
-                        @if ($customer_image && method_exists($customer_image, 'temporaryUrl'))
-                            <div class="flex justify-center mt-4">
-
-                                <img src="{{ $customer_image->temporaryUrl() }}"
-                                    alt="Preview"
-                                    class="w-32 h-32 rounded-full object-cover shadow-md border-4 border-base-200">
-
+                        @if ($customer_image)
+                            <div class="flex justify-center md:justify-start">
+                                <img src="{{ $customer_image->temporaryUrl() }}" alt="Preview"
+                                    class="w-32 h-32 rounded-full object-cover shadow-md hover:scale-105 transition-transform duration-200">
                             </div>
                         @endif
-
                     </div>
-
-                    {{-- Buttons --}}
-                    <div class="flex gap-2 justify-end mt-6">
-
-                        <button type="button"
-                            wire:click="closeModal"
-                            class="btn btn-ghost">
-                            Cancel
-                        </button>
-
-                        @if ($updateMode)
-
-                            <button type="submit"
-                                wire:loading.attr="disabled"
-                                class="btn btn-primary">
-
-                                <span wire:loading.remove wire:target="update">
-                                    Update
-                                </span>
-
-                                <span wire:loading wire:target="update">
-                                    Updating...
-                                </span>
-
-                            </button>
-
-                        @else
-
-                            <button type="submit"
-                                wire:loading.attr="disabled"
-                                class="btn btn-success">
-
-                                <span wire:loading.remove wire:target="store">
-                                    Add Customer
-                                </span>
-
-                                <span wire:loading wire:target="store">
-                                    Saving...
-                                </span>
-
-                            </button>
-
-                        @endif
-
-                    </div>
-
                 </form>
 
+                {{-- Buttons --}}
+                <div class="flex gap-2 justify-end mt-6">
+                    <button wire:click="closeModal" class="btn btn-ghost">Cancel</button>
+                    @if ($updateMode)
+                        <button wire:click="update" class="btn btn-primary">Update</button>
+                    @else
+                        <button wire:click="store" class="btn btn-success">Add Customer</button>
+                    @endif
+                </div>
             </div>
-
-            <div class="modal-backdrop"
-                wire:click="closeModal">
-            </div>
+            <div class="modal-backdrop" wire:click="closeModal"></div>
         </div>
     @endif
 
 
+
+
     {{-- Search, Pagination & Export --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-
-        <input type="text"
-            wire:model.live="search"
-            placeholder="Search Customers..."
+        <input type="text" wire:model.live="search" placeholder="Search Customers..."
             class="input input-bordered w-full md:w-80">
-
         <div class="text-gray-700 text-sm md:text-base">
-
             @if ($search)
-                <b>Search Result:</b>
-                {{ $customers->total() }} item(s) found.
+                <b>Search Result:</b> {{ $customers->total() }} item(s) found.
             @endif
-
         </div>
 
         @can('customer-create')
-            <button wire:click="create"
-                class="btn btn-primary shadow-lg shadow-primary/20">
-
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
+            <button wire:click="create" class="btn btn-primary shadow-lg shadow-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
-
-                    <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 4v16m8-8H4" />
-
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-
                 New Customer
-
             </button>
         @endcan
 
         @role('admin')
-            <button wire:click="exportExcel"
-                wire:loading.attr="disabled"
-                class="btn btn-success">
-
-                <span wire:loading.remove wire:target="exportExcel">
-                    Export Excel
-                </span>
-
-                <span wire:loading wire:target="exportExcel">
-                    Exporting...
-                </span>
-
+            <button wire:click="exportExcel" wire:loading.attr="disabled" class="btn btn-success">
+                <span wire:loading.remove>Export Excel</span>
             </button>
         @endrole
 
-        <select wire:model.live="perPage"
-            class="select select-bordered w-40">
-
+        <select wire:model.live="perPage" class="select select-bordered w-40">
             <option value="50">50</option>
             <option value="100">100</option>
             <option value="250">250</option>
-
         </select>
-
     </div>
-
 
     {{-- Trash Toggle --}}
     @role('admin')
         <div class="flex justify-between items-center mb-4">
-
-            <button wire:click="toggleTrash"
-                class="btn btn-sm">
-
+            <button wire:click="toggleTrash" class="btn btn-sm">
                 {{ $showDeleted ? 'Show Active Customers' : 'Show Trash' }}
-
             </button>
-
         </div>
     @endrole
 
-
     {{-- Customers Table --}}
     <div class="overflow-x-auto">
-
         <table class="table table-zebra w-full">
-
             <thead>
                 <tr>
                     <th>#Id</th>
@@ -291,381 +162,153 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-
             <tbody>
-
                 @forelse ($customers as $customer)
-
                     <tr @if ($customer->trashed()) class="opacity-50" @endif>
-
-                        <td>
-                            {{ $customer->id }}
-                        </td>
-
+                        <td>{{ $customer->id }}</td>
                         <td class="text-blue-600 font-medium">
-
-                            <a target="_blank"
-                                href="{{ route('customers.emi_plans', $customer->id) }}">
-
+                            <a target="_blank" href="{{ route('customers.emi_plans', $customer->id) }}">
                                 {{ $customer->customer_name }}
-
                             </a>
-
                         </td>
-
                         <td>
-
-                            <a target="_blank"
-                                href="{{ route('report.print', $customer->id) }}"
+                            <a target="_blank" href="{{ route('report.print', $customer->id) }}"
                                 class="hover:underline">
-
                                 {{ $customer->customer_id }}
-
                             </a>
-
                         </td>
-
                         <td>
-
-                            <a href="tel:{{ $customer->customer_phone }}"
-                                class="text-primary hover:underline">
-
+                            <a href="tel:{{ $customer->customer_phone }}" class="text-primary hover:underline">
                                 {{ $customer->customer_phone }}
-
                             </a>
-
                             @if ($customer->customer_phone2)
-
                                 <br>
-
-                                <a href="tel:{{ $customer->customer_phone2 }}"
-                                    class="text-primary hover:underline">
-
+                                <a href="tel:{{ $customer->customer_phone2 }}" class="text-primary hover:underline">
                                     {{ $customer->customer_phone2 }}
-
                                 </a>
-
                             @endif
-
                         </td>
-
+                        <td>{{ $customer->landlord_name }}</td>
+                        <td>{{ $customer->location->name ?? '-' }}</td>
                         <td>
-                            {{ $customer->landlord_name }}
-                        </td>
-
-                        <td>
-                            {{ $customer->location->name ?? '-' }}
-                        </td>
-
-
-                        {{-- CUSTOMER IMAGE --}}
-                        <td>
-
-                            @if (
-                                $customer->customer_image &&
-                                \Illuminate\Support\Facades\Storage::disk('public')->exists($customer->customer_image)
-                            )
-
-                                <img
-                                    src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($customer->customer_image) }}"
+                            @if ($customer->customer_image && file_exists(public_path('storage/' . $customer->customer_image)))
+                                <img src="{{ asset('storage/' . $customer->customer_image) }}"
                                     alt="{{ $customer->customer_name }}"
-                                    class="w-14 h-14 rounded-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200 shadow-sm border"
-                                    loading="lazy"
-                                    wire:click="openModal({{ $customer->id }})"
-                                >
-
+                                    class="w-14 h-14 rounded-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200 shadow-sm"
+                                    loading="lazy" wire:click="openModal({{ $customer->id }})" />
                             @else
-
-                                <div
-                                    class="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 shadow-sm"
+                                <div class="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 shadow-sm"
                                     wire:click="openModal({{ $customer->id }})">
-
-                                    <span class="text-gray-500 text-lg font-bold">
-
-                                        {{ strtoupper(substr($customer->customer_name, 0, 1)) }}
-
-                                    </span>
-
+                                    <span class="text-gray-500 text-lg font-bold">{{ substr($customer->customer_name, 0, 1) }}</span>
                                 </div>
-
                             @endif
-
                         </td>
-
-
-                        {{-- STATUS --}}
                         <td>
-
                             @if ($customer->trashed())
-
-                                <span class="badge badge-error">
-                                    Deleted
-                                </span>
-
+                                <span class="badge badge-error">Deleted</span>
                             @else
-
-                                <span class="badge badge-success">
-                                    Active
-                                </span>
-
+                                <span class="badge badge-success">Active</span>
                             @endif
-
                         </td>
-
-
-                        {{-- ACTIONS --}}
                         <td class="flex gap-1">
-
                             @if ($customer->trashed())
-
                                 @can('customer-edit')
-
                                     <button wire:click="restore({{ $customer->id }})"
-                                        class="btn btn-xs btn-success">
-
-                                        Restore
-
-                                    </button>
-
+                                        class="btn btn-xs btn-success">Restore</button>
                                 @endcan
-
                                 @can('customer-delete')
-
                                     <button wire:click="forceDelete({{ $customer->id }})"
                                         wire:confirm="Permanently delete this customer?"
-                                        class="btn btn-xs btn-error">
-
-                                        Delete Permanently
-
-                                    </button>
-
+                                        class="btn btn-xs btn-error">Delete Permanently</button>
                                 @endcan
-
                             @else
-
                                 @can('customer-edit')
-
                                     <button wire:click="edit({{ $customer->id }})"
-                                        class="btn btn-xs btn-warning">
-
-                                        Edit
-
-                                    </button>
-
+                                        class="btn btn-xs btn-warning">Edit</button>
                                 @endcan
-
                                 @can('customer-delete')
-
                                     <button wire:click="delete({{ $customer->id }})"
                                         wire:confirm="Move this customer to trash?"
-                                        class="btn btn-xs btn-error">
-
-                                        Delete
-
-                                    </button>
-
+                                        class="btn btn-xs btn-error">Delete</button>
                                 @endcan
-
                             @endif
-
                         </td>
-
                     </tr>
-
                 @empty
-
                     <tr>
-
-                        <td colspan="9"
-                            class="text-center text-gray-400 py-8">
-
-                            No customers found
-
-                        </td>
-
+                        <td colspan="9" class="text-center text-gray-400">No customers found</td>
                     </tr>
-
                 @endforelse
-
             </tbody>
-
         </table>
-
     </div>
-
 
     {{-- Pagination --}}
     <div class="mt-4">
         {{ $customers->links() }}
     </div>
 
-
-    {{-- Customer Information Modal --}}
+    {{-- Customer Modal --}}
     @if ($showModal && $viewCustomerData)
-
         <div class="modal modal-open">
-
             <div class="modal-box max-w-xl p-0 rounded-3xl shadow-2xl overflow-hidden">
-
                 {{-- Header --}}
                 <div class="flex items-center justify-between px-6 py-4 bg-primary text-primary-content">
-
-                    <h3 class="text-xl font-bold">
-                        Customer Information
-                    </h3>
-
+                    <h3 class="text-xl font-bold">Customer Information</h3>
                     <button wire:click="closeModal"
-                        class="btn btn-sm btn-circle btn-ghost text-xl">
-
-                        ✕
-
-                    </button>
-
+                        class="btn btn-sm btn-circle btn-ghost text-xl hover:bg-primary-focus">✕</button>
                 </div>
-
 
                 {{-- Body --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-base-100">
-
-
-                    {{-- Customer Information --}}
+                    {{-- Left Info --}}
                     <div class="md:col-span-2 space-y-4">
-
-                        <p class="text-2xl font-semibold text-gray-800">
-                            {{ $viewCustomerData->customer_name }}
-                        </p>
-
+                        <p class="text-2xl font-semibold text-gray-800">{{ $viewCustomerData->customer_name }}</p>
                         <div class="space-y-2 text-sm md:text-base text-gray-700">
-
-                            <p>
-                                <span class="font-semibold">
-                                    Customer ID:
-                                </span>
-
-                                {{ $viewCustomerData->customer_id }}
+                            <p><span class="font-semibold">Customer ID:</span> {{ $viewCustomerData->customer_id }}
                             </p>
-
                             <p class="flex items-center gap-2">
-
-                                <span class="font-semibold">
-                                    Phone:
-                                </span>
-
+                                <span class="font-semibold">Phone:</span>
                                 <a href="tel:{{ $viewCustomerData->customer_phone }}"
-                                    class="btn btn-xs md:btn-sm btn-outline btn-primary">
-
+                                    class="btn btn-xs md:btn-sm btn-outline btn-primary gap-1 hover:scale-105 transition-transform duration-200">
                                     📞 {{ $viewCustomerData->customer_phone }}
-
                                 </a>
-
                             </p>
-
-
                             @if ($viewCustomerData->customer_phone2)
-
                                 <p class="flex items-center gap-2">
-
-                                    <span class="font-semibold">
-                                        Phone 2:
-                                    </span>
-
+                                    <span class="font-semibold">Phone 2:</span>
                                     <a href="tel:{{ $viewCustomerData->customer_phone2 }}"
-                                        class="btn btn-xs md:btn-sm btn-outline btn-primary">
-
+                                        class="btn btn-xs md:btn-sm btn-outline btn-primary gap-1 hover:scale-105 transition-transform duration-200">
                                         📞 {{ $viewCustomerData->customer_phone2 }}
-
                                     </a>
-
                                 </p>
-
                             @endif
-
-
-                            <p>
-
-                                <span class="font-semibold">
-                                    Location:
-                                </span>
-
+                            <p><span class="font-semibold">Location:</span>
                                 {{ $viewCustomerData->location->name ?? '-' }}
-
                             </p>
-
-                            @if ($viewCustomerData->location_details)
-
-                                <p>
-
-                                    <span class="font-semibold">
-                                        Details:
-                                    </span>
-
-                                    {{ $viewCustomerData->location_details }}
-
-                                </p>
-
-                            @endif
-
-                            @if ($viewCustomerData->landlord_name)
-
-                                <p>
-
-                                    <span class="font-semibold">
-                                        Landlord:
-                                    </span>
-
-                                    {{ $viewCustomerData->landlord_name }}
-
-                                </p>
-
-                            @endif
-
                         </div>
-
                     </div>
 
-
-                    {{-- Customer Image --}}
+                    {{-- Right Image --}}
                     <div class="flex w-full justify-center md:justify-end">
-
-                        @if (
-                            $viewCustomerData->customer_image &&
-                            \Illuminate\Support\Facades\Storage::disk('public')->exists($viewCustomerData->customer_image)
-                        )
-
-                            <div class="rounded-3xl overflow-hidden w-44 h-44 shadow-lg">
-
-                                <img
-                                    loading="lazy"
-                                    src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($viewCustomerData->customer_image) }}"
-                                    alt="{{ $viewCustomerData->customer_name }}"
-                                    class="w-full h-full rounded-full object-cover"
-                                >
-
+                        @if ($viewCustomerData->customer_image && file_exists(public_path('storage/' . $viewCustomerData->customer_image)))
+                            <div
+                                class="rounded-3xl overflow-hidden w-44 h-44 hover:shadow-xl transition-shadow duration-300">
+                                <img loading="lazy" src="{{ asset('storage/' . $viewCustomerData->customer_image) }}"
+                                    alt="Customer Image"
+                                    class="w-full h-full rounded-full object-cover hover:scale-105 transition-transform duration-300">
                             </div>
-
                         @else
-
-                            <div class="w-44 h-44 flex items-center justify-center bg-base-200 rounded-full text-gray-400 text-5xl font-bold">
-
-                                {{ strtoupper(substr($viewCustomerData->customer_name, 0, 1)) }}
-
+                            <div
+                                class="w-56 h-56 flex items-center justify-center bg-base-200 rounded-3xl text-gray-400">
+                                {{ substr($viewCustomerData->customer_name, 0, 1) }}
                             </div>
-
                         @endif
-
                     </div>
 
                 </div>
-
             </div>
-
-            <div class="modal-backdrop"
-                wire:click="closeModal">
-            </div>
-
         </div>
-
     @endif
 
 </div>
-
