@@ -133,17 +133,6 @@
 </nav>
 
 
-
-    <!-- Scrolling Notices -->
-    <div class="scrolling-notices">
-        <div class="container">
-            @foreach ($notices as $notice)
-
-                <h4>{{ $notice->name }}</h4>
-            @endforeach
-        </div>
-    </div>
-
     <!-- Main Content -->
     <main class="container mt-4">
         @yield('content')
