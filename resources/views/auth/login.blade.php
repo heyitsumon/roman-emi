@@ -338,37 +338,10 @@
 
             <div class="brand-content">
 
-                <div class="brand-icon">
-                    💳
-                </div>
 
                 <h1>EMI Manager</h1>
 
-                <p>
-                    Manage your customers, payments, installments
-                    and financial records from one simple dashboard.
-                </p>
-
-                <ul class="feature-list">
-
-                    <li>
-                        ✓ Easy EMI Management
-                    </li>
-
-                    <li>
-                        ✓ Customer Management
-                    </li>
-
-                    <li>
-                        ✓ Payment Tracking
-                    </li>
-
-                    <li>
-                        ✓ Secure Dashboard
-                    </li>
-
-                </ul>
-
+               
             </div>
 
         </div>
