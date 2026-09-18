@@ -1,92 +1,104 @@
-<nav class="bg-base-100 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
+    <div class="container-xl">
 
-            <!-- Left: Brand / Logo -->
-            <div class="flex-shrink-0 flex items-center">
-                <a href="{{ route('dashboard') }}" class="text-xl font-bold text-primary">Emi-System</a>
-            </div>
+        {{-- Brand --}}
+        <a class="navbar-brand fw-bold text-primary"
+           href="{{ route('dashboard') }}">
+            Emi-System
+        </a>
 
-            <!-- Center: Desktop Links -->
-            <div class="hidden md:flex space-x-4">
-                <a wire:navigate href="{{ route('dashboard') }}" class="btn btn-ghost btn-sm">Dashboard</a>
-                @can('customer-list')
-                    <a wire:navigate href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm">Customers</a>
-                @endcan
-                @can('location-list')
-                    <a wire:navigate href="{{ route('locations.index') }}" class="btn btn-ghost btn-sm">Locations</a>
-                @endcan
-                @can('purchase-list')
-                    <a href="{{ route('purchases.index') }}" class="btn btn-ghost btn-sm">Purchases</a>
-                @endcan
-                @can('product-list')
-                    <a wire:navigate href="{{ route('products.index') }}" class="btn btn-ghost btn-sm">Products</a>
-                @endcan
-                @can('product-model-list')
-                    <a wire:navigate href="{{ route('products.model') }}" class="btn btn-ghost btn-sm">Products Model</a>
-                @endcan
-                @can('user-list')
-                    <a wire:navigate href="{{ route('users.index') }}" class="btn btn-ghost btn-sm">Users</a>
-                @endcan
-                @can('role-list')
-                    <a wire:navigate href="{{ route('roles.index') }}" class="btn btn-ghost btn-sm">Roles</a>
-                @endcan
-            </div>
+        {{-- Mobile Menu Button --}}
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
 
+            <span class="navbar-toggler-icon"></span>
 
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden flex items-center">
-                <button id="mobile-menu-button" class="btn btn-square btn-ghost">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
+        </button>
+
+        {{-- Navbar Links --}}
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+
+                {{-- Dashboard --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('dashboard') }}"
+                       class="nav-link px-3">
+                        Dashboard
+                    </a>
+                </li>
+
+                {{-- Customers --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('customers.index') }}"
+                       class="nav-link px-3">
+                        Customers
+                    </a>
+                </li>
+
+                {{-- Locations --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('locations.index') }}"
+                       class="nav-link px-3">
+                        Locations
+                    </a>
+                </li>
+
+                {{-- Purchases --}}
+                <li class="nav-item">
+                    <a href="{{ route('purchases.index') }}"
+                       class="nav-link px-3">
+                        Purchases
+                    </a>
+                </li>
+
+                {{-- Products --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('products.index') }}"
+                       class="nav-link px-3">
+                        Products
+                    </a>
+                </li>
+
+                {{-- Products Model --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('products.model') }}"
+                       class="nav-link px-3">
+                        Products Model
+                    </a>
+                </li>
+
+                {{-- Users --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('users.index') }}"
+                       class="nav-link px-3">
+                        Users
+                    </a>
+                </li>
+
+                {{-- Roles --}}
+                <li class="nav-item">
+                    <a wire:navigate
+                       href="{{ route('roles.index') }}"
+                       class="nav-link px-3">
+                        Roles
+                    </a>
+                </li>
+
+            </ul>
 
         </div>
     </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu-content" class="hidden md:hidden">
-        <ul class="menu p-2 bg-base-100 space-y-1">
-            <li><a wire:navigate href="{{ route('dashboard') }}">Dashboard</a></li>
-            @can('customer-list')
-                <li><a wire:navigate href="{{ route('customers.index') }}">Customers</a></li>
-            @endcan
-            @can('location-list')
-                <li><a wire:navigate href="{{ route('locations.index') }}">Locations</a></li>
-            @endcan
-            @can('purchase-list')
-                <li><a href="{{ route('purchases.index') }}">Purchases</a></li>
-            @endcan
-            @can('product-list')
-                <li><a wire:navigate href="{{ route('products.index') }}">Products</a></li>
-            @endcan
-            @can('product-model-list')
-                <li><a wire:navigate href="{{ route('products.model') }}">Products Model</a></li>
-            @endcan
-            @can('user-list')
-                <li><a wire:navigate href="{{ route('users.index') }}">Users</a></li>
-            @endcan
-            @can('role-list')
-                <li><a wire:navigate href="{{ route('roles.index') }}">Roles</a></li>
-            @endcan
-        </ul>
-    </div>
 </nav>
-
-<script>
-    if (!window.__navbarMenuInitialized) {
-        window.__navbarMenuInitialized = true;
-
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenuContent = document.getElementById('mobile-menu-content');
-
-        if (mobileMenuButton) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenuContent.classList.toggle('hidden');
-            });
-        }
-    }
-</script>

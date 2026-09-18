@@ -11,16 +11,29 @@ class Index extends Component
 {
     use WithPagination;
 
-    protected $paginationTheme = 'tailwind'; // DaisyUI compatible
+    protected $paginationTheme = 'bootstrap';
 
     public $name;
     public $locationId;
+
     public $isEdit = false;
+    public $isOpen = false;
+
     public $perPage = 30;
 
     protected $rules = [
         'name' => 'required|string|max:255',
     ];
+
+    public function create()
+    {
+        abort_unless(auth()->user()->can('location-create'), 403);
+
+        $this->resetInput();
+
+        $this->isEdit = false;
+        $this->isOpen = true;
+    }
 
     public function store()
     {
@@ -31,10 +44,13 @@ class Index extends Component
         $location = Location::create([
             'name' => $this->name,
         ]);
-        $location->users()->attach(Auth::id(), ['is_owner' => true]);
+
+        $location->users()->attach(Auth::id(), [
+            'is_owner' => true
+        ]);
 
         $this->resetInput();
-        $this->resetPage(); // important
+        $this->resetPage();
 
         session()->flash('success', 'Location added successfully');
     }
@@ -47,7 +63,9 @@ class Index extends Component
 
         $this->locationId = $id;
         $this->name = $location->name;
+
         $this->isEdit = true;
+        $this->isOpen = true;
     }
 
     public function update()
@@ -56,9 +74,11 @@ class Index extends Component
 
         $this->validate();
 
-        $this->accessibleLocations()->whereKey($this->locationId)->update([
-            'name' => $this->name,
-        ]);
+        $this->accessibleLocations()
+            ->whereKey($this->locationId)
+            ->update([
+                'name' => $this->name,
+            ]);
 
         $this->resetInput();
 
@@ -69,8 +89,11 @@ class Index extends Component
     {
         abort_unless(auth()->user()->can('location-delete'), 403);
 
-        $this->accessibleLocations()->findOrFail($id)->delete();
-        $this->resetPage(); // fix pagination bug
+        $this->accessibleLocations()
+            ->findOrFail($id)
+            ->delete();
+
+        $this->resetPage();
 
         session()->flash('success', 'Location deleted successfully');
     }
@@ -80,12 +103,17 @@ class Index extends Component
         $this->name = '';
         $this->locationId = null;
         $this->isEdit = false;
+        $this->isOpen = false;
+
+        $this->resetValidation();
     }
 
     public function render()
     {
         return view('livewire.locations.index', [
-            'locations' => $this->accessibleLocations()->latest()->paginate($this->perPage),
+            'locations' => $this->accessibleLocations()
+                ->latest()
+                ->paginate($this->perPage),
         ]);
     }
 

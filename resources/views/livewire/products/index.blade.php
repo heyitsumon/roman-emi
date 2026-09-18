@@ -1,158 +1,388 @@
-<div class="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+<div class="container-xl py-4">
 
     {{-- Header Section --}}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-base-100 p-6 rounded-2xl shadow-sm border border-base-200">
-        <div>
-            <h2 class="text-3xl font-extrabold tracking-tight text-base-content">Products</h2>
-            <p class="text-base-content/60 text-sm">Manage your inventory and associated product models</p>
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+
+                <div>
+                    <h2 class="fw-bold mb-1">Products</h2>
+                    <p class="text-muted small mb-0">
+                        Manage your inventory and associated product models
+                    </p>
+                </div>
+
+                @can('product-create')
+                    <button wire:click="create"
+                            class="btn btn-primary px-4 shadow-sm">
+                        New Product
+                    </button>
+                @endcan
+
+            </div>
+
         </div>
-        @can('product-create')
-            <button wire:click="create" class="btn btn-primary shadow-lg shadow-primary/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                New Product
-            </button>
-        @endcan
     </div>
+
 
     {{-- Notifications --}}
     @if (session()->has('success'))
-        <div class="alert alert-success shadow-sm rounded-xl">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+
+        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 mb-4"
+             role="alert">
+
             <span>{{ session('success') }}</span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
         </div>
+
     @elseif (session()->has('error'))
-        <div class="alert alert-error shadow-sm rounded-xl text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4"
+             role="alert">
+
             <span>{{ session('error') }}</span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
         </div>
+
     @endif
 
+
     {{-- Filters --}}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="relative w-full md:w-96">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/40">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </span>
-            <input type="text" wire:model.live="search" placeholder="Search product name or model..."
-                class="input input-bordered w-full pl-10 focus:ring-2 focus:ring-primary/20">
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+        <div class="card-body p-3">
+
+            <div class="row g-3 align-items-center">
+
+                <div class="col-md-8">
+
+                    <input type="text"
+                           wire:model.live="search"
+                           placeholder="Search product name or model..."
+                           class="form-control">
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="d-flex align-items-center justify-content-md-end gap-2">
+
+                        <span class="text-muted small fw-semibold">
+                            Show:
+                        </span>
+
+                        <select wire:model.live="perPage"
+                                class="form-select"
+                                style="width: 100px;">
+
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="flex items-center gap-2 self-end">
-            <span class="text-sm font-medium opacity-60">Show:</span>
-            <select wire:model.live="perPage" class="select select-bordered select-sm">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-            </select>
-        </div>
     </div>
+
 
     {{-- Data Table --}}
-    <div class="bg-base-100 rounded-2xl shadow-sm border border-base-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="table table-md w-full">
-                <thead class="bg-base-200/50">
-                    <tr class="text-base-content/70">
-                        <th class="w-20">Rank</th>
-                        <th>Product Details</th>
-                        <th>Associated Models</th>
-                        <th class="text-right">Manage</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-base-200">
-                    @forelse ($products as $key => $product)
-                        <tr class="hover:bg-base-200/20 transition-colors">
-                            <td class="font-mono text-xs opacity-50">
-                                #{{ str_pad($products->firstItem() + $key, 2, '0', STR_PAD_LEFT) }}
-                            </td>
-                            <td>
-                                <div class="font-bold text-base">{{ $product->product_name }}</div>
-                            </td>
-                            <td>
-                                <div class="flex flex-wrap gap-2">
-                                    @forelse($product->models as $model)
-                                        <div class="badge badge-outline badge-ghost border-base-300 text-[11px] font-medium py-2">
-                                            {{ $model->model_name }}
-                                        </div>
-                                    @empty
-                                        <span class="text-base-content/40 text-xs italic">Unassigned</span>
-                                    @endforelse
-                                </div>
-                            </td>
-                            <td>
-                                <div class="flex justify-end gap-2">
-                                    @can('product-edit')
-                                        <button wire:click="edit({{ $product->id }})"
-                                            class="btn btn-square btn-ghost btn-sm text-warning hover:bg-warning/10"
-                                            title="Edit Product">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                        </button>
-                                    @endcan
-                                    @can('product-delete')
-                                        <button wire:click="delete({{ $product->id }})"
-                                            onclick="confirm('Delete this product and its models?') || event.stopImmediatePropagation()"
-                                            class="btn btn-square btn-ghost btn-sm text-error hover:bg-error/10"
-                                            title="Delete Product">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        </button>
-                                    @endcan
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-12">
-                                <div class="flex flex-col items-center opacity-40">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
-                                    <p class="font-medium">No results found for "{{ $search }}"</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="card-header bg-white border-0 p-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Products
+                    </h5>
+
+                    <small class="text-muted">
+                        Product and associated model list
+                    </small>
+                </div>
+
+                <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                    {{ $products->total() }}
+                </span>
+
+            </div>
+
         </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th class="px-4" style="width: 80px;">
+                            Rank
+                        </th>
+
+                        <th>
+                            Product Details
+                        </th>
+
+                        <th>
+                            Associated Models
+                        </th>
+
+                        <th class="text-end px-4">
+                            Manage
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse ($products as $key => $product)
+
+                        <tr>
+
+                            <td class="px-4">
+
+                                <span class="text-muted small font-monospace">
+                                    #{{ str_pad($products->firstItem() + $key, 2, '0', STR_PAD_LEFT) }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-bold">
+                                    {{ $product->product_name }}
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="d-flex flex-wrap gap-2">
+
+                                    @forelse($product->models as $model)
+
+                                        <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal">
+
+                                            {{ $model->model_name }}
+
+                                        </span>
+
+                                    @empty
+
+                                        <span class="text-muted small fst-italic">
+                                            Unassigned
+                                        </span>
+
+                                    @endforelse
+
+                                </div>
+
+                            </td>
+
+
+                            <td class="text-end px-4">
+
+                                <div class="d-flex justify-content-end gap-2">
+
+                                    @can('product-edit')
+
+                                        <button wire:click="edit({{ $product->id }})"
+                                                class="btn btn-sm btn-outline-warning"
+                                                title="Edit Product">
+
+                                            Edit
+
+                                        </button>
+
+                                    @endcan
+
+
+                                    @can('product-delete')
+
+                                        <button wire:click="delete({{ $product->id }})"
+                                                onclick="confirm('Delete this product and its models?') || event.stopImmediatePropagation()"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Delete Product">
+
+                                            Delete
+
+                                        </button>
+
+                                    @endcan
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td colspan="4" class="text-center py-5">
+
+                                <div class="text-muted">
+
+                                    <p class="fw-semibold mb-1">
+                                        No results found for "{{ $search }}"
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
     </div>
 
+
     {{-- Pagination Section --}}
-    <div class="mt-2">
+    <div class="mt-4">
+
         {{ $products->links() }}
+
     </div>
+
 
     {{-- Modal --}}
     @if ($isOpen)
-        <div class="modal modal-open">
-            <div class="modal-box max-w-md rounded-2xl p-0 overflow-hidden">
-                <div class="bg-base-200 p-6">
-                    <h3 class="font-black text-xl">{{ $product_id ? 'Update Product' : 'Create New Product' }}</h3>
-                    <p class="text-xs opacity-60">Enter the details below to save the product.</p>
-                </div>
-                
-                <div class="p-6 space-y-4">
-                    <div class="form-control w-full">
-                        <label class="label"><span class="label-text font-bold">Product Name</span></label>
-                        <input type="text" wire:model="product_name" placeholder="e.g. Samsung Galaxy"
-                            class="input input-bordered w-full focus:input-primary @error('product_name') border-error @enderror">
-                        @error('product_name')
-                            <label class="label"><span class="label-text-alt text-error font-medium">{{ $message }}</span></label>
-                        @enderror
+
+        <div class="modal fade show d-block"
+             tabindex="-1"
+             style="background: rgba(0,0,0,.5);"
+             wire:click.self="closeModal">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                    {{-- Modal Header --}}
+                    <div class="modal-header bg-light border-0 p-4">
+
+                        <div>
+
+                            <h5 class="modal-title fw-bold mb-1">
+                                {{ $product_id ? 'Update Product' : 'Create New Product' }}
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Enter the details below to save the product.
+                            </p>
+
+                        </div>
+
+                        <button type="button"
+                                class="btn-close"
+                                wire:click="closeModal">
+                        </button>
+
                     </div>
+
+
+                    {{-- Modal Body --}}
+                    <div class="modal-body p-4">
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Product Name
+                            </label>
+
+                            <input type="text"
+                                   wire:model="product_name"
+                                   placeholder="e.g. Samsung Galaxy"
+                                   class="form-control @error('product_name') is-invalid @enderror">
+
+                            @error('product_name')
+
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+
+                            @enderror
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- Modal Footer --}}
+                    <div class="modal-footer bg-white border-0 p-4">
+
+                        <button class="btn btn-light border"
+                                wire:click="closeModal">
+
+                            Cancel
+
+                        </button>
+
+
+                        @if ($product_id)
+
+                            <button class="btn btn-success px-4"
+                                    wire:click="update">
+
+                                Update Changes
+
+                            </button>
+
+                        @else
+
+                            <button class="btn btn-primary px-4"
+                                    wire:click="store">
+
+                                Confirm Save
+
+                            </button>
+
+                        @endif
+
+                    </div>
+
                 </div>
 
-                <div class="modal-action bg-base-100 p-6 mt-0">
-                    <button class="btn btn-ghost btn-sm" wire:click="closeModal">Cancel</button>
-                    @if ($product_id)
-                        <button class="btn btn-success btn-sm px-6" wire:click="update">Update Changes</button>
-                    @else
-                        <button class="btn btn-primary btn-sm px-6" wire:click="store">Confirm Save</button>
-                    @endif
-                </div>
             </div>
-            <div class="modal-backdrop bg-black/40" wire:click="closeModal"></div>
+
         </div>
+
     @endif
 
 </div>
