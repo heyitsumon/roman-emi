@@ -20,7 +20,7 @@ class InstallmentController extends Controller
         $customerId = $request->customer_id;
 
         foreach ($request->payments as $purchaseId => $amount) {
-            $amount = round((float) $amount, 2);
+            $amount = floatval($amount);
             if ($amount <= 0) continue;
 
             $purchase = Purchase::with(['installments' => function ($q) {
@@ -37,9 +37,7 @@ class InstallmentController extends Controller
 
             if (!$installment) continue;
 
-            $due = max(round((float) $installment->amount - (float) $installment->paid_amount, 2), 0);
-            $amount = min($amount, $due);
-            if ($amount <= 0) continue;
+            $due = $installment->amount - $installment->paid_amount;
             $installment->paid_amount += $amount;
 
             // Update status
