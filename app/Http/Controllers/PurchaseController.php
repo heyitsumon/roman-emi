@@ -31,12 +31,29 @@ class PurchaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $purchases = Purchase::with('customer', 'product')->orderBy('created_at', 'desc')->paginate(100);
-        $totalPurchases = Purchase::count();
-        return view('purchases.index', compact('purchases', 'totalPurchases'));
-    }
+   public function index()
+{
+    $purchases = Purchase::with([
+        'customer.location',
+        'product',
+        'model'
+    ])
+    ->orderBy('created_at', 'desc')
+    ->paginate(100);
+
+    $totalPurchases = Purchase::count();
+
+    $totalNet = Purchase::sum('net_price');
+
+    $totalDown = Purchase::sum('down_price');
+
+    return view('purchases.index', compact(
+        'purchases',
+        'totalPurchases',
+        'totalNet',
+        'totalDown'
+    ));
+}
 
     /**
      * Show the form for creating a new resource.
