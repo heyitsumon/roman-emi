@@ -36,6 +36,12 @@ class DashboardCalculationTest extends TestCase
 
         InstallmentPayment::create([
             'installment_id' => $installment->id,
+            'amount' => 200.00,
+            'paid_at' => now(),
+        ]);
+
+        InstallmentPayment::create([
+            'installment_id' => $installment->id,
             'amount' => 500.00,
             'paid_at' => now(),
         ]);
@@ -44,7 +50,9 @@ class DashboardCalculationTest extends TestCase
 
         $this->assertSame(1000.0, (float) $data['totalSales']);
         $this->assertSame(1000.0, (float) $data['totalNet']);
+        $this->assertSame(700.0, (float) $data['totalPaid']);
         $this->assertSame(200.0, (float) $data['totalProfit']);
         $this->assertSame(300.0, (float) $data['totalDue']);
+        $this->assertSame(700.0, (float) $data['today']['paid']);
     }
 }

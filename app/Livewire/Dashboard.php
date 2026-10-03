@@ -51,7 +51,7 @@ class Dashboard extends Component
         $totalSales = round((float) $purchases->sum('net_price'), 2);
         $totalNet = round((float) $purchases->sum('net_price'), 2);
         $totalDown = round((float) $purchases->sum('down_price'), 2);
-        $totalPaid = round((float) $purchases->sum('down_price') + $payments->sum('amount'), 2);
+        $totalPaid = round((float) $payments->sum('amount'), 2);
         $totalDue = round(max($totalNet - $totalPaid, 0), 2);
         $totalProfit = round((float) $purchases->sum(
             fn ($purchase) => (float) $purchase->net_price - (float) $purchase->sales_price
@@ -73,7 +73,6 @@ class Dashboard extends Component
             $profit = (float) $periodPurchases->sum(
                 fn ($purchase) => (float) $purchase->net_price - (float) $purchase->sales_price
             );
-            $downPayments = (float) $periodPurchases->sum('down_price');
             $now = now();
             $installmentPayments = (float) $payments
                 ->filter(function ($payment) use ($period, $now): bool {
@@ -87,7 +86,7 @@ class Dashboard extends Component
                     };
                 })
                 ->sum('amount');
-            $paid = $downPayments + $installmentPayments;
+            $paid = $installmentPayments;
 
             return [
                 'sales' => round($sales, 2),
@@ -118,11 +117,10 @@ class Dashboard extends Component
             $profit = (float) $annualPurchases->sum(
                 fn ($purchase) => (float) $purchase->net_price - (float) $purchase->sales_price
             );
-            $downPayments = (float) $annualPurchases->sum('down_price');
             $installmentPayments = (float) $payments
                 ->filter(fn ($payment) => $payment->paid_at->year === $calendarYear)
                 ->sum('amount');
-            $paid = $downPayments + $installmentPayments;
+            $paid = $installmentPayments;
 
             return [
                 'year' => $calendarYear,
