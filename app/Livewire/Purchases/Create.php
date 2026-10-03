@@ -99,6 +99,14 @@ class Create extends Component
                     ]);
                 }
 
+                if ($purchase->down_price > 0) {
+                    InstallmentPayment::create([
+                        'installment_id' => $installments[0]->id,
+                        'amount' => $purchase->down_price,
+                        'paid_at' => now(),
+                    ]);
+                }
+
                 return $purchase;
             });
         } catch (\Throwable $exception) {
