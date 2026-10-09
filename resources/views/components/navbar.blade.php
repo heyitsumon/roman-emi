@@ -26,14 +26,16 @@
 
             <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
 
-                {{-- Dashboard --}}
-                <li class="nav-item">
-                    <a wire:navigate
-                       href="{{ route('dashboard') }}"
-                       class="nav-link px-3">
-                        Dashboard
-                    </a>
-                </li>
+                @can('dashboard-view')
+                    {{-- Dashboard --}}
+                    <li class="nav-item">
+                        <a wire:navigate
+                           href="{{ route('dashboard') }}"
+                           class="nav-link px-3">
+                            Dashboard
+                        </a>
+                    </li>
+                @endcan
 
                 {{-- Customers --}}
                 <li class="nav-item">
@@ -44,58 +46,70 @@
                     </a>
                 </li>
 
-                {{-- Locations --}}
-                <li class="nav-item">
-                    <a wire:navigate
-                       href="{{ route('locations.index') }}"
-                       class="nav-link px-3">
-                        Locations
-                    </a>
-                </li>
+                @can('location-list')
+                    {{-- Locations --}}
+                    <li class="nav-item">
+                        <a wire:navigate
+                           href="{{ route('locations.index') }}"
+                           class="nav-link px-3">
+                            Locations
+                        </a>
+                    </li>
+                @endcan
 
-                {{-- Purchases --}}
-                <li class="nav-item">
-                    <a href="{{ route('purchases.index') }}"
-                       class="nav-link px-3">
-                        Purchases
-                    </a>
-                </li>
+                @can('purchase-list')
+                    {{-- Purchases --}}
+                    <li class="nav-item">
+                        <a href="{{ route('purchases.index') }}"
+                           class="nav-link px-3">
+                            Purchases
+                        </a>
+                    </li>
+                @endcan
 
-                {{-- Products --}}
-                <li class="nav-item">
-                    <a wire:navigate
-                       href="{{ route('products.index') }}"
-                       class="nav-link px-3">
-                        Products
-                    </a>
-                </li>
+                @can('product-list')
+                    {{-- Products --}}
+                    <li class="nav-item">
+                        <a wire:navigate
+                           href="{{ route('products.index') }}"
+                           class="nav-link px-3">
+                            Products
+                        </a>
+                    </li>
+                @endcan
 
-                {{-- Products Model --}}
-                <li class="nav-item">
-                    <a wire:navigate
-                       href="{{ route('products.model') }}"
-                       class="nav-link px-3">
-                        Products Model
-                    </a>
-                </li>
+                @can('product-model-list')
+                    {{-- Products Model --}}
+                    <li class="nav-item">
+                        <a wire:navigate
+                           href="{{ route('products.model') }}"
+                           class="nav-link px-3">
+                            Products Model
+                        </a>
+                    </li>
+                @endcan
 
-                {{-- Users --}}
-                <li class="nav-item">
-                    <a wire:navigate
-                       href="{{ route('users.index') }}"
-                       class="nav-link px-3">
-                        Users
-                    </a>
-                </li>
+                @can('user-list')
+                    {{-- Users --}}
+                    <li class="nav-item">
+                        <a wire:navigate
+                           href="{{ route('users.index') }}"
+                           class="nav-link px-3">
+                            Users
+                        </a>
+                    </li>
+                @endcan
 
-                {{-- Roles --}}
-                <li class="nav-item">
-                    <a wire:navigate
-                       href="{{ route('roles.index') }}"
-                       class="nav-link px-3">
-                        Roles
-                    </a>
-                </li>
+                @can('role-list')
+                    {{-- Roles --}}
+                    <li class="nav-item">
+                        <a wire:navigate
+                           href="{{ route('roles.index') }}"
+                           class="nav-link px-3">
+                            Roles
+                        </a>
+                    </li>
+                @endcan
 
             </ul>
 

@@ -3,9 +3,24 @@
     <a wire:navigate href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm">হোম মেনু</a>
 
     {{-- Customer Header --}}
-    <h2 class="text-xl md:text-2xl font-bold text-center md:text-left">
-        Customer Name: <span class="text-primary">{{ $customer->customer_name }}</span>
-    </h2>
+    @php
+        $imagePath = $customer->customer_image;
+        $imageUrl = asset('image/profile.png');
+
+        if ($imagePath && file_exists(public_path($imagePath))) {
+            $imageUrl = asset($imagePath);
+        } elseif ($imagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath)) {
+            $imageUrl = asset('storage/' . $imagePath);
+        }
+    @endphp
+    <div class="flex items-center gap-4">
+        <img src="{{ $imageUrl }}"
+             alt="{{ $customer->customer_name }}"
+             class="h-16 w-16 rounded-full object-cover border border-base-300">
+        <h2 class="text-xl md:text-2xl font-bold text-center md:text-left">
+            Customer Name: <span class="text-primary">{{ $customer->customer_name }}</span>
+        </h2>
+    </div>
 
     {{-- Success Message --}}
     @if (session('success'))

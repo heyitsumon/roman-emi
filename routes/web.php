@@ -67,7 +67,7 @@ Route::get('/users', UsersIndex::class)
 
 Route::get('/dashboard', Dashboard::class)
     ->name('dashboard')
-    ->middleware(['auth', 'role:admin']);
+    ->middleware(['auth', 'permission:dashboard-view']);
 
 
 // Route::get('my-customer', Customer::class);

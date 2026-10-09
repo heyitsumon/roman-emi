@@ -1,6 +1,6 @@
 <div class="container-fluid py-4">
 
-    @role('admin')
+    @can('dashboard-view')
 
     {{-- Header --}}
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -482,7 +482,7 @@
 
     </section>
 
-    @endrole
+    @endcan
 
 </div>
 
