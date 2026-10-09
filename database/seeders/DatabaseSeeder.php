@@ -86,6 +86,15 @@ class DatabaseSeeder extends Seeder
             $admin->assignRole('admin');
         }
 
+        // Spatie caches roles/permissions; reset it so the freshly seeded
+        // records take effect immediately (avoids "@can() = false" after seeding).
+        \Illuminate\Support\Facades\Artisan::call('permission:cache-reset');
+
+        if (User::count() === 0) {
+            $this->command->warn('No users exist yet. Create a user, then run:');
+            $this->command->warn('php artisan roles:admin you@example.com');
+        }
+
         // $permissions = [
             
         //     'installment-pay-show',
