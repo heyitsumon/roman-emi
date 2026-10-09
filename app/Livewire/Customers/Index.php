@@ -55,7 +55,9 @@ class Index extends Component
     public function openModal($id = null)
     {
         if ($id) {
-            $this->viewCustomerData = $this->accessibleCustomers()->with('location')->findOrFail($id);
+            // withTrashed: the trash view lists trashed customers too,
+            // so opening their profile must not 404.
+            $this->viewCustomerData = $this->accessibleCustomers()->withTrashed()->with('location')->findOrFail($id);
             $this->showModal = true;
         }
     }
@@ -320,13 +322,28 @@ class Index extends Component
 
     private function accessibleCustomers()
     {
-        return Customer::whereIn('location_id', auth()->user()->accessibleLocationIds());
+        // Must stay consistent with the list query in render(): users without
+        // assigned locations are not restricted. Applying an empty
+        // whereIn(location_id, []) here made every detail lookup
+        // (profile modal, EMI/installment page) throw a 404 while the
+        // customer was still visible in the list.
+        $locationIds = auth()->user()->accessibleLocationIds();
+
+        $query = Customer::query();
+
+        if (! empty($locationIds)) {
+            $query->whereIn('location_id', $locationIds);
+        }
+
+        return $query;
     }
 
 
     public function customerEmiPlans($id)
     {
-        $customer = $this->accessibleCustomers()->with('purchases.installments')->findOrFail($id);
+        // withTrashed: trashed customers remain listed (trash view) and their
+        // EMI/installment page must stay reachable from that list.
+        $customer = $this->accessibleCustomers()->withTrashed()->with('purchases.installments')->findOrFail($id);
 
         $paymentHistory = InstallmentPayment::with('installment.purchase.product')
             ->whereHas('installment.purchase', function ($query) use ($id) {
