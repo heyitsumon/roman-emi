@@ -69,6 +69,11 @@
     }
 </style>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet">
 <div class="container-fluid container-lg py-3 py-md-4 customer-page">
 
     {{-- Home Menu --}}
