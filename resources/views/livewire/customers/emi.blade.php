@@ -5,7 +5,7 @@
         <a wire:navigate
            href="{{ route('customers.index') }}"
            class="btn btn-ghost btn-sm min-h-10">
-            হোম মেনু
+            হোম মেনু //////
         </a>
     </div>
 
