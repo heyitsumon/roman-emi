@@ -1,10 +1,13 @@
+```blade
+<div class="container-fluid container-lg py-3 py-md-4">
 
-<div class="container mx-auto w-full max-w-full px-3 sm:px-4 lg:px-6 py-4 space-y-5 sm:space-y-6 overflow-hidden">
-
-    <a wire:navigate href="{{ route('customers.index') }}"
-       class="btn btn-ghost btn-sm max-w-full">
-        হোম মেনু
-    </a>
+    {{-- Home Menu --}}
+    <div class="mb-3">
+        <a wire:navigate href="{{ route('customers.index') }}"
+           class="btn btn-outline-secondary btn-sm">
+            হোম মেনু
+        </a>
+    </div>
 
     {{-- Customer Header --}}
     @php
@@ -18,12 +21,13 @@
         }
     @endphp
 
-    <div class="flex flex-col xs:flex-row sm:flex-row items-center sm:items-center gap-3 sm:gap-4 w-full min-w-0">
+    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-center gap-3 mb-4">
         <img src="{{ $imageUrl }}"
              alt="{{ $customer->customer_name }}"
-             class="h-16 w-16 min-w-16 shrink-0 rounded-full object-cover border border-base-300">
+             class="rounded-circle border shadow-sm flex-shrink-0"
+             style="width: 64px; height: 64px; object-fit: cover;">
 
-        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-center sm:text-left break-words min-w-0 max-w-full">
+        <h2 class="h5 h4-md fw-bold text-center text-sm-start mb-0 text-break">
             Customer Name:
             <span class="text-primary">{{ $customer->customer_name }}</span>
         </h2>
@@ -31,201 +35,205 @@
 
     {{-- Success Message --}}
     @if (session('success'))
-        <div class="alert alert-success shadow-lg w-full min-w-0 break-words">
-            <div class="flex items-center gap-2 min-w-0">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4"
+             role="alert">
+            <div class="d-flex align-items-center gap-2 text-break">
                 <svg xmlns="http://www.w3.org/2000/svg"
-                     class="stroke-current h-6 w-6 shrink-0"
-                     fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2" d="M5 13l4 4L19 7"/>
+                     width="24" height="24"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2"
+                     class="flex-shrink-0">
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M5 13l4 4L19 7"/>
                 </svg>
-                <span class="break-words">{{ session('success') }}</span>
+
+                <span>{{ session('success') }}</span>
             </div>
+
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"></button>
         </div>
     @endif
 
-   
-{{-- Purchase & EMI Summary --}}
-<div class="card bg-base-100 shadow-md w-full min-w-0"
-     style="max-width: 100%;">
+    {{-- Purchase & EMI Summary --}}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-2 p-sm-3 p-md-4">
 
-    <div class="card-body p-2 sm:p-4 md:p-5 min-w-0"
-         style="width: 100%; max-width: 100%;">
+            <h5 class="card-title fw-bold mb-3">
+                Purchase &amp; EMI Summary
+            </h5>
 
-        {{-- Horizontal Scroll Container --}}
-        <div style="
-            display: block;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-x pan-y;
-        ">
+            {{-- Responsive Table --}}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th class="text-nowrap">তারিখ</th>
+                            <th>পণ্য</th>
+                            <th class="text-nowrap">মূল্য</th>
+                            <th class="text-nowrap">জমা</th>
+                            <th class="text-nowrap">বাকি</th>
+                            <th class="text-nowrap">কিস্তি</th>
+                            <th class="text-nowrap">অ্যাকশন</th>
+                        </tr>
+                    </thead>
 
-            <table class="table table-zebra text-sm"
-                   style="min-width: 850px; width: 850px;">
-
-                <thead>
-                    <tr class="bg-primary text-primary-content">
-                        <th class="whitespace-nowrap">তারিখ</th>
-                        <th class="whitespace-nowrap">পণ্য</th>
-                        <th class="whitespace-nowrap">মূল্য</th>
-                        <th class="whitespace-nowrap">জমা</th>
-                        <th class="whitespace-nowrap">বাকি</th>
-                        <th class="whitespace-nowrap">কিস্তি</th>
-                        <th class="whitespace-nowrap">অ্যাকশন</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @php
-                        $grandTotalPrice = 0;
-                        $grandTotalPaid = 0;
-                        $grandTotalDue = 0;
-                        $grandTotalDown = 0;
-                    @endphp
-
-                    @foreach ($customer->purchases as $purchase)
+                    <tbody>
                         @php
-                            $product = $purchase->product;
-                            $totalPrice = round((float) $purchase->net_price, 2);
-                            $down = round((float) $purchase->down_price, 2);
-                            $totalPaid = round((float) $purchase->installments->sum('paid_amount'), 2);
-                            $totalDue = max(round($totalPrice - $down - $totalPaid, 2), 0);
-                            $totalDeposit = round($totalPaid + $down, 2);
-
-                            $grandTotalPrice += $totalPrice;
-                            $grandTotalPaid += $totalPaid;
-                            $grandTotalDown += $down;
-                            $grandTotalDue += $totalDue;
+                            $grandTotalPrice = 0;
+                            $grandTotalPaid = 0;
+                            $grandTotalDue = 0;
+                            $grandTotalDown = 0;
                         @endphp
 
-                        <tr>
-                            <td class="whitespace-nowrap">
-                                {{ \Carbon\Carbon::parse($purchase->created_at)->format('d-m-Y') }}
-                            </td>
+                        @foreach ($customer->purchases as $purchase)
+                            @php
+                                $product = $purchase->product;
+                                $totalPrice = round((float) $purchase->net_price, 2);
+                                $down = round((float) $purchase->down_price, 2);
+                                $totalPaid = round((float) $purchase->installments->sum('paid_amount'), 2);
+                                $totalDue = max(round($totalPrice - $down - $totalPaid, 2), 0);
+                                $totalDeposit = round($totalPaid + $down, 2);
 
-                            <td class="whitespace-nowrap">
-                                {{ $product?->product_name ?? 'N/A' }}
-                            </td>
+                                $grandTotalPrice += $totalPrice;
+                                $grandTotalPaid += $totalPaid;
+                                $grandTotalDown += $down;
+                                $grandTotalDue += $totalDue;
+                            @endphp
 
-                            <td class="whitespace-nowrap">
-                                {{ number_format($totalPrice, 2) }} ৳
-                            </td>
+                            <tr>
+                                <td class="text-nowrap">
+                                    {{ \Carbon\Carbon::parse($purchase->created_at)->format('d-m-Y') }}
+                                </td>
 
-                            <td class="whitespace-nowrap">
-                                {{ number_format($totalDeposit, 2) }} ৳
-                            </td>
+                                <td class="text-break">
+                                    {{ $product?->product_name ?? 'N/A' }}
+                                </td>
 
-                            <td class="whitespace-nowrap">
-                                <span class="{{ $totalDue > 0 ? 'text-error font-bold' : 'text-success font-bold' }}">
-                                    {{ number_format($totalDue, 2) }} ৳
-                                </span>
-                            </td>
+                                <td class="text-nowrap">
+                                    {{ number_format($totalPrice, 2) }} ৳
+                                </td>
 
-                            {{-- Payment Form --}}
-                            <td>
-                                <form action="{{ route('installments.pay-multiple') }}"
-                                      method="POST"
-                                      class="flex flex-col gap-2"
-                                      style="min-width: 110px;">
-                                    @csrf
+                                <td class="text-nowrap">
+                                    {{ number_format($totalDeposit, 2) }} ৳
+                                </td>
 
-                                    <input type="hidden"
-                                           name="customer_id"
-                                           value="{{ $customer->id }}">
+                                <td class="text-nowrap">
+                                    <span class="{{ $totalDue > 0 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
+                                        {{ number_format($totalDue, 2) }} ৳
+                                    </span>
+                                </td>
 
-                                    <input type="number"
-                                           name="payments[{{ $purchase->id }}]"
-                                           class="input input-sm input-bordered w-full"
-                                           value="0"
-                                           min="0"
-                                           max="{{ $totalDue }}"
-                                           step="0.01"
-                                           {{ $totalDue <= 0 ? 'disabled' : '' }}>
-
-                                    @if (auth()->user()->hasRole('admin'))
-                                        <button type="submit"
-                                                class="btn btn-success btn-sm w-full"
-                                                {{ $totalDue <= 0 ? 'disabled' : '' }}>
-                                            Pay
-                                        </button>
-                                    @endif
-                                </form>
-                            </td>
-
-                            <td>
-                                @if (auth()->user()->hasRole('admin'))
-                                    <form action="{{ route('purchases.destroy', $purchase->id) }}"
+                                {{-- Payment Form --}}
+                                <td>
+                                    <form action="{{ route('installments.pay-multiple') }}"
                                           method="POST"
-                                          onsubmit="return confirm('আপনি কি নিশ্চিতভাবে মুছতে চান?');">
+                                          class="d-flex flex-column gap-2"
+                                          style="min-width: 110px;">
                                         @csrf
-                                        @method('DELETE')
 
-                                        <button type="submit"
-                                                class="btn btn-error btn-sm w-full">
-                                            ডিলিট
-                                        </button>
+                                        <input type="hidden"
+                                               name="customer_id"
+                                               value="{{ $customer->id }}">
+
+                                        <input type="number"
+                                               name="payments[{{ $purchase->id }}]"
+                                               class="form-control form-control-sm"
+                                               value="0"
+                                               min="0"
+                                               max="{{ $totalDue }}"
+                                               step="0.01"
+                                               {{ $totalDue <= 0 ? 'disabled' : '' }}>
+
+                                        @if (auth()->user()->hasRole('admin'))
+                                            <button type="submit"
+                                                    class="btn btn-success btn-sm w-100"
+                                                    {{ $totalDue <= 0 ? 'disabled' : '' }}>
+                                                Pay
+                                            </button>
+                                        @endif
                                     </form>
-                                @endif
+                                </td>
+
+                                {{-- Purchase Delete --}}
+                                <td>
+                                    @if (auth()->user()->hasRole('admin'))
+                                        <form action="{{ route('purchases.destroy', $purchase->id) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('আপনি কি নিশ্চিতভাবে মুছতে চান?');">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm w-100">
+                                                ডিলিট
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+
+                        {{-- Totals Row --}}
+                        <tr>
+                            <td colspan="7" class="p-2">
+                                <div class="bg-light border rounded p-3">
+                                    <div class="row g-3 fw-semibold">
+
+                                        <div class="col-12 col-md-4">
+                                            মোট মূল্য:
+                                            <span class="fw-bold text-dark">
+                                                {{ number_format($grandTotalPrice, 2) }} ৳
+                                            </span>
+                                        </div>
+
+                                        <div class="col-12 col-md-4">
+                                            মোট জমা:
+                                            <span class="fw-bold text-dark">
+                                                {{ number_format($grandTotalPaid + $grandTotalDown, 2) }} ৳
+                                            </span>
+                                        </div>
+
+                                        <div class="col-12 col-md-4">
+                                            <span class="{{ $grandTotalDue > 0 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
+                                                মোট বাকি:
+                                                {{ number_format($grandTotalDue, 2) }} ৳
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </td>
                         </tr>
-                    @endforeach
 
-                    {{-- Totals Row --}}
-                    <tr>
-                        <td colspan="7" class="p-2 sm:p-3">
-                            <div class="bg-base-200 rounded-lg p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-semibold">
-
-                                <div>
-                                    মোট মূল্য:
-                                    <span class="font-bold">
-                                        {{ number_format($grandTotalPrice, 2) }} ৳
-                                    </span>
-                                </div>
-
-                                <div>
-                                    মোট জমা:
-                                    <span class="font-bold">
-                                        {{ number_format($grandTotalPaid + $grandTotalDown, 2) }} ৳
-                                    </span>
-                                </div>
-
-                                <div class="{{ $grandTotalDue > 0 ? 'text-error font-bold' : 'text-success font-bold' }}">
-                                    মোট বাকি:
-                                    {{ number_format($grandTotalDue, 2) }} ৳
-                                </div>
-
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-
 
     {{-- Payment History --}}
-    <div class="card bg-base-100 shadow-md w-full min-w-0">
-        <div class="card-body p-2 sm:p-4 md:p-5 min-w-0">
+    <div class="card border-0 shadow-sm mb-4">
 
-            <div class="px-3 sm:px-4 py-3 bg-primary text-primary-content font-bold text-base sm:text-lg rounded-t-lg">
-                Payment History
-            </div>
+        <div class="card-header bg-primary text-white fw-bold py-3">
+            Payment History
+        </div>
 
-            <div class="w-full max-w-full overflow-x-auto overscroll-x-contain">
-                <table class="table table-zebra w-full min-w-[480px] text-sm">
-                    <thead>
-                        <tr class="bg-base-200">
-                            <th class="whitespace-nowrap">তারিখ</th>
+        <div class="card-body p-2 p-sm-3 p-md-4">
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-nowrap">তারিখ</th>
                             <th>পণ্য</th>
-                            <th class="whitespace-nowrap">জমা (৳)</th>
+                            <th class="text-nowrap">জমা (৳)</th>
 
                             @role('admin')
-                                <th class="whitespace-nowrap">অ্যাকশন</th>
+                                <th class="text-nowrap">অ্যাকশন</th>
                             @endrole
                         </tr>
                     </thead>
@@ -233,51 +241,54 @@
                     <tbody>
                         @forelse($paymentHistory as $payment)
                             <tr>
-                                <td class="whitespace-nowrap">
+                                <td class="text-nowrap">
                                     {{ \Carbon\Carbon::parse($payment->paid_at)->format('d M Y') }}
                                 </td>
 
-                                <td class="break-words">
+                                <td class="text-break">
                                     {{ $payment->installment->purchase->product->product_name ?? 'N/A' }}
                                 </td>
 
-                                <td class="text-success font-semibold whitespace-nowrap">
+                                <td class="text-success fw-semibold text-nowrap">
                                     {{ number_format($payment->amount, 2) }}
                                 </td>
 
                                 @role('admin')
                                     <td>
-                                        <div class="flex flex-col sm:flex-row gap-2 min-w-[120px]">
+                                        <div class="d-flex flex-column flex-sm-row gap-2">
+
                                             <a href="{{ route('payments.edit', $payment->id) }}"
-                                               class="btn btn-warning btn-sm w-full">
+                                               class="btn btn-warning btn-sm">
                                                 এডিট
                                             </a>
 
                                             <form action="{{ route('payments.destroy', $payment->id) }}"
                                                   method="POST"
-                                                  class="w-full"
                                                   onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই পেমেন্ট মুছতে চান?');">
                                                 @csrf
                                                 @method('DELETE')
 
                                                 <button type="submit"
-                                                        class="btn btn-error btn-sm w-full">
+                                                        class="btn btn-danger btn-sm w-100">
                                                     ডিলিট
                                                 </button>
                                             </form>
+
                                         </div>
                                     </td>
                                 @endrole
                             </tr>
+
                         @empty
                             <tr>
                                 <td colspan="@role('admin')4 @else 3 @endrole"
-                                    class="text-center text-gray-500 italic py-4">
+                                    class="text-center text-secondary fst-italic py-4">
                                     কোন পেমেন্ট পাওয়া যায়নি।
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -285,6 +296,8 @@
 
 </div>
 
-
- <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</head>>
