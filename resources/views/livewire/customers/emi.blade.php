@@ -75,88 +75,93 @@
                         $grandTotalDown = 0;
                     @endphp
 
-                    @foreach ($customer->purchases as $purchase)
-                        @php
-                            $product = $purchase->product;
-                            $totalPrice = round((float) $purchase->net_price, 2);
-                            $down = round((float) $purchase->down_price, 2);
-                            $totalPaid = round((float) $purchase->installments->sum('paid_amount'), 2);
-                            $totalDue = max(round($totalPrice - $down - $totalPaid, 2), 0);
-                            $totalDeposit = round($totalPaid + $down, 2);
+                  
+@foreach ($customer->purchases as $purchase)
+    @php
+        $product = $purchase->product;
+        $totalPrice = round((float) $purchase->net_price, 2);
+        $down = round((float) $purchase->down_price, 2);
+        $totalPaid = round((float) $purchase->installments->sum('paid_amount'), 2);
+        $totalDue = max(round($totalPrice - $down - $totalPaid, 2), 0);
+        $totalDeposit = round($totalPaid + $down, 2);
 
-                            $grandTotalPrice += $totalPrice;
-                            $grandTotalPaid += $totalPaid;
-                            $grandTotalDown += $down;
-                            $grandTotalDue += $totalDue;
-                        @endphp
+        $grandTotalPrice += $totalPrice;
+        $grandTotalPaid += $totalPaid;
+        $grandTotalDown += $down;
+        $grandTotalDue += $totalDue;
+    @endphp
 
-                        <tr>
-                            <td class="whitespace-nowrap">
-                                {{ \Carbon\Carbon::parse($purchase->created_at)->format('d-m-Y') }}
-                            </td>
+    <tr>
+        <td class="whitespace-nowrap">
+            {{ \Carbon\Carbon::parse($purchase->created_at)->format('d-m-Y') }}
+        </td>
 
-                            <td class="min-w-[120px] max-w-[200px] whitespace-normal break-words">
-                                {{ $product?->product_name ?? 'N/A' }}
-                            </td>
+        <td class="break-words min-w-[120px]">
+            {{ $product?->product_name ?? 'N/A' }}
+        </td>
 
-                            <td class="whitespace-nowrap">
-                                {{ number_format($totalPrice, 2) }} ৳
-                            </td>
+        <td class="whitespace-nowrap">
+            {{ number_format($totalPrice, 2) }} ৳
+        </td>
 
-                            <td class="whitespace-nowrap">
-                                {{ number_format($totalDeposit, 2) }} ৳
-                            </td>
+        <td class="whitespace-nowrap">
+            {{ number_format($totalDeposit, 2) }} ৳
+        </td>
 
-                            <td class="whitespace-nowrap">
-                                <span class="{{ $totalDue > 0 ? 'text-error font-bold' : 'text-success font-bold' }}">
-                                    {{ number_format($totalDue, 2) }} ৳
-                                </span>
-                            </td>
+        <td class="whitespace-nowrap">
+            <span class="{{ $totalDue > 0 ? 'text-error font-bold' : 'text-success font-bold' }}">
+                {{ number_format($totalDue, 2) }} ৳
+            </span>
+        </td>
 
-                            <form action="{{ route('installments.pay-multiple') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="customer_id" value="{{ $customer->id }}">
+        <td class="min-w-[130px]">
+            @if (auth()->user()->hasRole('admin'))
+                <form action="{{ route('installments.pay-multiple') }}"
+                      method="POST"
+                      class="flex flex-col gap-2 min-w-[110px]">
+                    @csrf
 
-                                <td class="min-w-[110px]">
-                                    <input type="number"
-                                           name="payments[{{ $purchase->id }}]"
-                                           class="input input-sm input-bordered w-full min-w-[90px] max-w-[140px]"
-                                           value="0"
-                                           min="0"
-                                           max="{{ $totalDue }}"
-                                           step="0.01"
-                                           {{ $totalDue <= 0 ? 'disabled' : '' }}>
-                                </td>
+                    <input type="hidden"
+                           name="customer_id"
+                           value="{{ $customer->id }}">
 
-                                <td class="min-w-[100px]">
-                                    <div class="flex flex-col gap-2 min-w-[90px]">
-                                        @if (auth()->user()->hasRole('admin'))
-                                            <button type="submit"
-                                                    class="btn btn-success btn-sm w-full"
-                                                    {{ $totalDue <= 0 ? 'disabled' : '' }}>
-                                                Pay
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-                            </form>
+                    <input type="number"
+                           name="payments[{{ $purchase->id }}]"
+                           class="input input-bordered input-sm w-full"
+                           value="0"
+                           min="0"
+                           max="{{ $totalDue }}"
+                           step="0.01"
+                           {{ $totalDue <= 0 ? 'disabled' : '' }}>
 
-                            @if (auth()->user()->hasRole('admin'))
-                                <td class="min-w-[100px]">
-                                    <form action="{{ route('purchases.destroy', $purchase->id) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('আপনি কি নিশ্চিতভাবে মুছতে চান?');">
-                                        @csrf
-                                        @method('DELETE')
+                    <button type="submit"
+                            class="btn btn-success btn-sm w-full"
+                            {{ $totalDue <= 0 ? 'disabled' : '' }}>
+                        Pay
+                    </button>
+                </form>
+            @else
+                <span>—</span>
+            @endif
+        </td>
 
-                                        <button type="submit" class="btn btn-error btn-sm w-full">
-                                            ডিলিট
-                                        </button>
-                                    </form>
-                                </td>
-                            @endif
-                        </tr>
-                    @endforeach
+        <td class="min-w-[100px]">
+            @if (auth()->user()->hasRole('admin'))
+                <form action="{{ route('purchases.destroy', $purchase->id) }}"
+                      method="POST"
+                      onsubmit="return confirm('আপনি কি নিশ্চিতভাবে মুছতে চান?');">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit" class="btn btn-error btn-sm w-full">
+                        ডিলিট
+                    </button>
+                </form>
+            @endif
+        </td>
+    </tr>
+@endforeach
+
 
                     {{-- Totals Row --}}
                     <tr>
