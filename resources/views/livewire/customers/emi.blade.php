@@ -1,9 +1,80 @@
-```blade
-<div class="container-fluid container-lg py-3 py-md-4">
+
+<style>
+    .customer-table-scroll {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x pan-y;
+    }
+
+    .customer-table-scroll table {
+        margin-bottom: 0;
+        width: 100%;
+    }
+
+    .customer-table-scroll.purchase-table table {
+        min-width: 850px;
+    }
+
+    .customer-table-scroll.payment-table table {
+        min-width: 550px;
+    }
+
+    .customer-table-scroll th,
+    .customer-table-scroll td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .customer-table-scroll td.text-break {
+        white-space: normal;
+        min-width: 120px;
+    }
+
+    .customer-table-scroll .totals-cell {
+        white-space: normal;
+        min-width: 0;
+    }
+
+    .customer-table-scroll .totals-cell .row > div {
+        overflow-wrap: anywhere;
+    }
+
+    .customer-page {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .customer-page .card {
+        min-width: 0;
+    }
+
+    @media (max-width: 575.98px) {
+        .customer-page {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .customer-table-scroll.purchase-table table {
+            min-width: 850px;
+        }
+
+        .customer-table-scroll.payment-table table {
+            min-width: 550px;
+        }
+    }
+</style>
+
+<div class="container-fluid container-lg py-3 py-md-4 customer-page">
 
     {{-- Home Menu --}}
     <div class="mb-3">
-        <a wire:navigate href="{{ route('customers.index') }}"
+        <a wire:navigate
+           href="{{ route('customers.index') }}"
            class="btn btn-outline-secondary btn-sm">
             হোম মেনু
         </a>
@@ -21,13 +92,13 @@
         }
     @endphp
 
-    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-center gap-3 mb-4">
+    <div class="d-flex flex-column flex-sm-row align-items-center gap-3 mb-4">
         <img src="{{ $imageUrl }}"
              alt="{{ $customer->customer_name }}"
              class="rounded-circle border shadow-sm flex-shrink-0"
-             style="width: 64px; height: 64px; object-fit: cover;">
+             style="width:64px;height:64px;object-fit:cover;">
 
-        <h2 class="h5 h4-md fw-bold text-center text-sm-start mb-0 text-break">
+        <h2 class="h5 fw-bold text-center text-sm-start mb-0 text-break">
             Customer Name:
             <span class="text-primary">{{ $customer->customer_name }}</span>
         </h2>
@@ -37,6 +108,7 @@
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4"
              role="alert">
+
             <div class="d-flex align-items-center gap-2 text-break">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="24" height="24"
@@ -51,7 +123,8 @@
                 <span>{{ session('success') }}</span>
             </div>
 
-            <button type="button" class="btn-close"
+            <button type="button"
+                    class="btn-close"
                     data-bs-dismiss="alert"
                     aria-label="Close"></button>
         </div>
@@ -65,18 +138,27 @@
                 Purchase &amp; EMI Summary
             </h5>
 
-            {{-- Responsive Table --}}
-            <div class="table-responsive">
-                <table class="table table-striped table-hover table-bordered align-middle mb-0">
+            {{-- Purchase Table Horizontal Scroll --}}
+            <div class="customer-table-scroll purchase-table"
+                 tabindex="0"
+                 role="region"
+                 aria-label="Purchase and EMI summary table"
+                 aria-describedby="purchase-scroll-help">
+
+                <div id="purchase-scroll-help" class="visually-hidden">
+                    Scroll horizontally to view all purchase columns.
+                </div>
+
+                <table class="table table-striped table-hover table-bordered align-middle">
                     <thead class="table-primary">
                         <tr>
-                            <th class="text-nowrap">তারিখ</th>
+                            <th>তারিখ</th>
                             <th>পণ্য</th>
-                            <th class="text-nowrap">মূল্য</th>
-                            <th class="text-nowrap">জমা</th>
-                            <th class="text-nowrap">বাকি</th>
-                            <th class="text-nowrap">কিস্তি</th>
-                            <th class="text-nowrap">অ্যাকশন</th>
+                            <th>মূল্য</th>
+                            <th>জমা</th>
+                            <th>বাকি</th>
+                            <th>কিস্তি</th>
+                            <th>অ্যাকশন</th>
                         </tr>
                     </thead>
 
@@ -104,7 +186,7 @@
                             @endphp
 
                             <tr>
-                                <td class="text-nowrap">
+                                <td>
                                     {{ \Carbon\Carbon::parse($purchase->created_at)->format('d-m-Y') }}
                                 </td>
 
@@ -112,15 +194,15 @@
                                     {{ $product?->product_name ?? 'N/A' }}
                                 </td>
 
-                                <td class="text-nowrap">
+                                <td>
                                     {{ number_format($totalPrice, 2) }} ৳
                                 </td>
 
-                                <td class="text-nowrap">
+                                <td>
                                     {{ number_format($totalDeposit, 2) }} ৳
                                 </td>
 
-                                <td class="text-nowrap">
+                                <td>
                                     <span class="{{ $totalDue > 0 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
                                         {{ number_format($totalDue, 2) }} ৳
                                     </span>
@@ -131,7 +213,7 @@
                                     <form action="{{ route('installments.pay-multiple') }}"
                                           method="POST"
                                           class="d-flex flex-column gap-2"
-                                          style="min-width: 110px;">
+                                          style="min-width:110px;">
                                         @csrf
 
                                         <input type="hidden"
@@ -178,7 +260,7 @@
 
                         {{-- Totals Row --}}
                         <tr>
-                            <td colspan="7" class="p-2">
+                            <td colspan="7" class="totals-cell p-2">
                                 <div class="bg-light border rounded p-3">
                                     <div class="row g-3 fw-semibold">
 
@@ -207,7 +289,6 @@
                                 </div>
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
             </div>
@@ -223,17 +304,21 @@
 
         <div class="card-body p-2 p-sm-3 p-md-4">
 
-            <div class="table-responsive">
-                <table class="table table-striped table-hover table-bordered align-middle mb-0">
+            {{-- Payment History Horizontal Scroll --}}
+            <div class="customer-table-scroll payment-table"
+                 tabindex="0"
+                 role="region"
+                 aria-label="Payment history table">
 
+                <table class="table table-striped table-hover table-bordered align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th class="text-nowrap">তারিখ</th>
+                            <th>তারিখ</th>
                             <th>পণ্য</th>
-                            <th class="text-nowrap">জমা (৳)</th>
+                            <th>জমা (৳)</th>
 
                             @role('admin')
-                                <th class="text-nowrap">অ্যাকশন</th>
+                                <th>অ্যাকশন</th>
                             @endrole
                         </tr>
                     </thead>
@@ -241,7 +326,7 @@
                     <tbody>
                         @forelse($paymentHistory as $payment)
                             <tr>
-                                <td class="text-nowrap">
+                                <td>
                                     {{ \Carbon\Carbon::parse($payment->paid_at)->format('d M Y') }}
                                 </td>
 
@@ -249,7 +334,7 @@
                                     {{ $payment->installment->purchase->product->product_name ?? 'N/A' }}
                                 </td>
 
-                                <td class="text-success fw-semibold text-nowrap">
+                                <td class="text-success fw-semibold">
                                     {{ number_format($payment->amount, 2) }}
                                 </td>
 
@@ -288,16 +373,9 @@
                             </tr>
                         @endforelse
                     </tbody>
-
                 </table>
             </div>
         </div>
     </div>
 
 </div>
-
-<head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet">
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</head>>
