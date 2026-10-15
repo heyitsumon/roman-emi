@@ -34,7 +34,7 @@
 
         <h2 class="text-base sm:text-xl md:text-2xl font-bold min-w-0 flex-1 leading-relaxed"
             style="overflow-wrap:anywhere; word-break:normal;">
-            <span>Customer Name:</span>
+            <span>Name:</span>
             <span class="text-primary">{{ $shortCustomerName }}</span>
         </h2>
     </div>
