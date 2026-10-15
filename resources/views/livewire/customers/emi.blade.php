@@ -16,8 +16,8 @@
 
     $customerName = trim($customer->customer_name ?? '');
     $nameWords = preg_split('/\s+/u', $customerName, -1, PREG_SPLIT_NO_EMPTY);
-    $shortCustomerName = count($nameWords) > 10
-        ? implode(' ', array_slice($nameWords, 0, 10)) . '...'
+    $shortCustomerName = count($nameWords) > 5
+        ? implode(' ', array_slice($nameWords, 0, 5)) . '...'
         : $customerName;
 @endphp
 
