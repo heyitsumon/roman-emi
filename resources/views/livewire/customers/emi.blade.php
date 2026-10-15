@@ -2,25 +2,36 @@
 
     <a wire:navigate href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm">হোম মেনু</a>
 
-    {{-- Customer Header --}}
-    @php
-        $imagePath = $customer->customer_image;
-        $imageUrl = asset('image/profile.png');
+   
+{{-- Customer Header --}}
+@php
+    $imagePath = $customer->customer_image;
+    $imageUrl = asset('image/profile.png');
 
-        if ($imagePath && file_exists(public_path($imagePath))) {
-            $imageUrl = asset($imagePath);
-        } elseif ($imagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath)) {
-            $imageUrl = asset('storage/' . $imagePath);
-        }
-    @endphp
-    <div class="flex items-center gap-4">
-        <img src="{{ $imageUrl }}"
-             alt="{{ $customer->customer_name }}"
-             class="h-16 w-16 rounded-full object-cover border border-base-300">
-        <h2 class="text-xl md:text-2xl font-bold text-center md:text-left">
-            Customer Name: <span class="text-primary">{{ $customer->customer_name }}</span>
-        </h2>
-    </div>
+    if ($imagePath && file_exists(public_path($imagePath))) {
+        $imageUrl = asset($imagePath);
+    } elseif ($imagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath)) {
+        $imageUrl = asset('storage/' . $imagePath);
+    }
+
+    $customerName = trim($customer->customer_name ?? '');
+    $nameWords = preg_split('/\s+/u', $customerName, -1, PREG_SPLIT_NO_EMPTY);
+    $shortCustomerName = count($nameWords) > 10
+        ? implode(' ', array_slice($nameWords, 0, 10)) . '...'
+        : $customerName;
+@endphp
+
+<div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 w-full">
+    <img src="{{ $imageUrl }}"
+         alt="{{ $customerName }}"
+         class="h-14 w-14 sm:h-16 sm:w-16 rounded-full object-cover border border-base-300 shrink-0">
+
+    <h2 class="text-lg sm:text-xl md:text-2xl font-bold min-w-0 flex-1 break-words [overflow-wrap:anywhere]">
+        Customer Name:
+        <span class="text-primary">{{ $shortCustomerName }}</span>
+    </h2>
+</div>
+
 
     {{-- Success Message --}}
     @if (session('success'))
@@ -45,7 +56,7 @@
                     <tr class="bg-primary text-primary-content">
                         <th>তারিখ</th>
                         <th>পণ্য</th>
-                        <th>মূল্য bangladesh4</th>
+                        <th>মূল্য </th>
                         <th>জমা</th>
                         <th>বাকি</th>
                         <th>কিস্তি</th>
