@@ -157,6 +157,117 @@
                 animation-duration: 18s;
             }
         }
+
+
+        
+/* Customer page: mobile font-size correction */
+.customer-page,
+.customer-page * {
+    box-sizing: border-box;
+}
+
+.customer-page {
+    width: 100%;
+    max-width: 100%;
+    font-size: 17px !important;
+    line-height: 1.6;
+}
+
+.customer-page h1,
+.customer-page h2,
+.customer-page h3,
+.customer-page h4,
+.customer-page h5 {
+    font-size: 22px !important;
+    line-height: 1.5 !important;
+}
+
+.customer-page p,
+.customer-page span,
+.customer-page label,
+.customer-page .alert {
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.customer-page .customer-table {
+    font-size: 17px !important;
+}
+
+.customer-page .customer-table th,
+.customer-page .customer-table td {
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+    padding: 12px !important;
+}
+
+.customer-page .btn,
+.customer-page button {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    padding: 8px 12px;
+}
+
+.customer-page input,
+.customer-page select,
+.customer-page textarea {
+    font-size: 16px !important;
+    min-height: 42px;
+}
+
+.customer-page .customer-payment-input {
+    width: 120px;
+    max-width: 100%;
+}
+
+.customer-page .customer-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile screens */
+@media (max-width: 767.98px) {
+    .customer-page {
+        padding: 12px !important;
+        font-size: 18px !important;
+    }
+
+    .customer-page h1,
+    .customer-page h2,
+    .customer-page h3,
+    .customer-page h4,
+    .customer-page h5,
+    .customer-page .customer-name {
+        font-size: 22px !important;
+    }
+
+    .customer-page p,
+    .customer-page span,
+    .customer-page label,
+    .customer-page .alert {
+        font-size: 18px;
+    }
+
+    .customer-page .customer-table th,
+    .customer-page .customer-table td {
+        font-size: 17px !important;
+        padding: 12px !important;
+    }
+
+    .customer-page .btn,
+    .customer-page button {
+        font-size: 16px !important;
+        min-height: 42px;
+    }
+
+    .customer-page input,
+    .customer-page select,
+    .customer-page textarea {
+        font-size: 16px !important;
+    }
+}
+
     </style>
 </head>
 
