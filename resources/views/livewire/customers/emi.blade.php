@@ -32,11 +32,11 @@
              alt="{{ $customerName }}"
              class="h-12 w-12 sm:h-16 sm:w-16 rounded-full object-cover border border-base-300 shrink-0">
 
-        <h2 class="text-base sm:text-xl md:text-2xl font-bold min-w-0 flex-1 leading-relaxed"
+        <h4 class="text-base sm:text-xl md:text-2xl font-bold min-w-0 flex-1 leading-relaxed"
             style="overflow-wrap:anywhere; word-break:normal;">
             <span>Name:</span>
             <span class="text-primary">{{ $shortCustomerName }}</span>
-        </h2>
+        </h4>
     </div>
 
     {{-- Success Message --}}
