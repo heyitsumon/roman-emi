@@ -39,7 +39,7 @@
     {{-- Purchase & EMI Summary --}}
     <div class="card bg-base-100 shadow-md">
         <div class="card-body p-0">
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto overflow-y-auto max-h-96">
                 <table class="table table-zebra w-full">
                     <thead>
                     <tr class="bg-primary text-primary-content">
@@ -136,7 +136,7 @@
     <div class="card bg-base-100 shadow-md">
         <div class="card-body p-0">
             <div class="px-4 py-2 bg-primary text-primary-content font-bold text-lg">Payment History</div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto overflow-y-auto max-h-96">
                 <table class="table table-zebra w-full">
                     <thead>
                     <tr class="bg-base-200">
