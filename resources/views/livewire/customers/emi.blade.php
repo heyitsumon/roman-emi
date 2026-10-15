@@ -1,201 +1,9 @@
 
-<style>
-    /* Customer page custom responsive CSS */
-    .customer-page {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        padding: 1rem;
-        overflow-x: clip;
-    }
+<div class="w-full max-w-full min-w-0 px-3 py-4 sm:px-4 md:px-6 space-y-5 overflow-x-hidden">
 
-    .customer-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        min-width: 0;
-    }
-
-    .customer-avatar {
-        width: 64px;
-        height: 64px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 2px solid #dee2e6;
-        flex-shrink: 0;
-    }
-
-    .customer-name {
-        min-width: 0;
-        overflow-wrap: anywhere;
-        word-break: normal;
-        font-size: 1.25rem;
-        line-height: 1.5;
-        font-weight: 700;
-        margin: 0;
-    }
-
-    .customer-card {
-        width: 100%;
-        min-width: 0;
-        border: 1px solid #dee2e6;
-        border-radius: 0.65rem;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
-
-    .customer-card-body {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .customer-table-wrapper {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-        overflow-y: auto;
-        max-height: 400px;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .customer-table {
-        width: 100%;
-        min-width: 650px;
-        margin-bottom: 0;
-        vertical-align: middle;
-    }
-
-    .customer-table th,
-    .customer-table td {
-        padding: 0.75rem;
-        font-size: 0.95rem;
-        vertical-align: middle;
-    }
-
-    .customer-table thead th {
-        white-space: nowrap;
-    }
-
-    .customer-product-name {
-        min-width: 120px;
-        overflow-wrap: anywhere;
-    }
-
-    .customer-payment-input {
-        width: 115px;
-        max-width: 100%;
-    }
-
-    .customer-payment-form {
-        min-width: 100px;
-    }
-
-    .customer-totals {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-around;
-        gap: 1rem;
-        padding: 1rem;
-        background: #f1f3f5;
-        font-weight: 600;
-    }
-
-    .customer-total-item {
-        max-width: 100%;
-        overflow-wrap: anywhere;
-    }
-
-    .customer-section-title {
-        padding: 0.9rem 1rem;
-        background: #0d6efd;
-        color: #fff;
-        font-size: 1.1rem;
-        font-weight: 700;
-        overflow-wrap: anywhere;
-    }
-
-    .customer-history-table {
-        min-width: 420px;
-    }
-
-    .customer-action-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        min-width: 75px;
-    }
-
-    .customer-action-buttons .btn {
-        white-space: nowrap;
-    }
-
-    .customer-alert {
-        overflow-wrap: anywhere;
-    }
-
-    @media (max-width: 576px) {
-        .customer-page {
-            padding: 0.65rem;
-        }
-
-        .customer-header {
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .customer-avatar {
-            width: 48px;
-            height: 48px;
-        }
-
-        .customer-name {
-            font-size: 1.05rem;
-        }
-
-        .customer-table th,
-        .customer-table td {
-            padding: 0.6rem;
-            font-size: 0.9rem;
-        }
-
-        .customer-section-title {
-            font-size: 1rem;
-        }
-
-        .customer-totals {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.65rem;
-            padding: 0.85rem;
-        }
-
-        .customer-payment-input {
-            width: 100px;
-        }
-    }
-
-    @media (min-width: 768px) {
-        .customer-page {
-            padding: 1.25rem;
-        }
-    }
-
-    @media (min-width: 1200px) {
-        .customer-page {
-            padding: 1.5rem;
-        }
-    }
-</style>
-
-<div class="container-fluid customer-page">
-
-    {{-- Home Menu --}}
-    <div class="mb-3">
-        <a wire:navigate
-           href="{{ route('customers.index') }}"
-           class="btn btn-outline-secondary btn-sm">
+    <div class="w-full">
+        <a wire:navigate href="{{ route('customers.index') }}"
+           class="btn btn-ghost btn-sm max-w-full">
             হোম মেনু
         </a>
     </div>
@@ -207,33 +15,25 @@
 
         if ($imagePath && file_exists(public_path($imagePath))) {
             $imageUrl = asset($imagePath);
-        } elseif (
-            $imagePath &&
-            \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath)
-        ) {
+        } elseif ($imagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath)) {
             $imageUrl = asset('storage/' . $imagePath);
         }
 
         $customerName = trim($customer->customer_name ?? '');
-
-        $nameWords = preg_split(
-            '/\s+/u',
-            $customerName,
-            -1,
-            PREG_SPLIT_NO_EMPTY
-        ) ?: [];
+        $nameWords = preg_split('/\s+/u', $customerName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         $shortCustomerName = count($nameWords) > 10
             ? implode(' ', array_slice($nameWords, 0, 10)) . '...'
             : $customerName;
     @endphp
 
-    <div class="customer-header mb-4">
+    <div class="flex items-start gap-3 sm:items-center sm:gap-4 w-full min-w-0">
         <img src="{{ $imageUrl }}"
              alt="{{ $customerName }}"
-             class="customer-avatar">
+             class="h-12 w-12 sm:h-16 sm:w-16 rounded-full object-cover border border-base-300 shrink-0">
 
-        <h4 class="customer-name">
+        <h4 class="text-base sm:text-xl md:text-xl font-bold min-w-0 flex-1 leading-relaxed"
+            style="overflow-wrap:anywhere; word-break:normal;">
             <span>Name:</span>
             <span class="text-primary">{{ $shortCustomerName }}</span>
         </h4>
@@ -241,41 +41,30 @@
 
     {{-- Success Message --}}
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show customer-alert"
-             role="alert">
-            <div class="d-flex align-items-start gap-2">
+        <div class="alert alert-success shadow-lg min-w-0 max-w-full">
+            <div class="min-w-0">
                 <svg xmlns="http://www.w3.org/2000/svg"
-                     width="22"
-                     height="22"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="2"
-                     viewBox="0 0 24 24"
-                     aria-hidden="true"
-                     class="flex-shrink-0">
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M5 13l4 4L19 7"/>
+                     class="stroke-current h-6 w-6 shrink-0"
+                     fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-
-                <span>{{ session('success') }}</span>
+                <span class="min-w-0" style="overflow-wrap:anywhere;">
+                    {{ session('success') }}
+                </span>
             </div>
-
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close"></button>
         </div>
     @endif
 
     {{-- Purchase & EMI Summary --}}
-    <div class="customer-card mb-4">
-        <div class="customer-card-body">
+    <div class="card bg-base-100 shadow-md w-full max-w-full min-w-0">
+        <div class="card-body p-0 min-w-0">
 
-            <div class="customer-table-wrapper">
-                <table class="table table-striped table-hover table-bordered customer-table">
-                    <thead class="table-primary">
-                        <tr>
+            <div class="w-full max-w-full overflow-x-auto overflow-y-auto max-h-96"
+                 style="-webkit-overflow-scrolling:touch;">
+                <table class="table table-zebra w-full min-w-[650px]">
+                    <thead>
+                        <tr class="bg-primary text-primary-content">
                             <th>তারিখ</th>
                             <th>পণ্য</th>
                             <th>মূল্য</th>
@@ -297,31 +86,11 @@
                         @foreach ($customer->purchases as $purchase)
                             @php
                                 $product = $purchase->product;
-
-                                $totalPrice = round(
-                                    (float) $purchase->net_price,
-                                    2
-                                );
-
-                                $down = round(
-                                    (float) $purchase->down_price,
-                                    2
-                                );
-
-                                $totalPaid = round(
-                                    (float) $purchase->installments->sum('paid_amount'),
-                                    2
-                                );
-
-                                $totalDue = max(
-                                    round($totalPrice - $down - $totalPaid, 2),
-                                    0
-                                );
-
-                                $totalDeposit = round(
-                                    $totalPaid + $down,
-                                    2
-                                );
+                                $totalPrice = round((float) $purchase->net_price, 2);
+                                $down = round((float) $purchase->down_price, 2);
+                                $totalPaid = round((float) $purchase->installments->sum('paid_amount'), 2);
+                                $totalDue = max(round($totalPrice - $down - $totalPaid, 2), 0);
+                                $totalDeposit = round($totalPaid + $down, 2);
 
                                 $grandTotalPrice += $totalPrice;
                                 $grandTotalPaid += $totalPaid;
@@ -330,24 +99,24 @@
                             @endphp
 
                             <tr>
-                                <td class="text-nowrap">
+                                <td class="whitespace-nowrap">
                                     {{ \Carbon\Carbon::parse($purchase->created_at)->format('d-m-Y') }}
                                 </td>
 
-                                <td class="customer-product-name">
+                                <td class="min-w-0" style="overflow-wrap:anywhere;">
                                     {{ $product?->product_name ?? 'N/A' }}
                                 </td>
 
-                                <td class="text-nowrap">
+                                <td class="whitespace-nowrap">
                                     {{ number_format($totalPrice, 2) }} ৳
                                 </td>
 
-                                <td class="text-nowrap">
+                                <td class="whitespace-nowrap">
                                     {{ number_format($totalDeposit, 2) }} ৳
                                 </td>
 
-                                <td class="text-nowrap">
-                                    <span class="{{ $totalDue > 0 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
+                                <td class="whitespace-nowrap">
+                                    <span class="{{ $totalDue > 0 ? 'text-error font-bold' : 'text-success font-bold' }}">
                                         {{ number_format($totalDue, 2) }} ৳
                                     </span>
                                 </td>
@@ -355,26 +124,25 @@
                                 <td>
                                     <form action="{{ route('installments.pay-multiple') }}"
                                           method="POST"
-                                          class="customer-payment-form">
+                                          class="min-w-0">
                                         @csrf
-
                                         <input type="hidden"
                                                name="customer_id"
                                                value="{{ $customer->id }}">
 
                                         <input type="number"
                                                name="payments[{{ $purchase->id }}]"
-                                               class="form-control form-control-sm customer-payment-input"
+                                               class="input input-sm input-bordered w-24 max-w-full"
                                                value="0"
                                                min="0"
                                                max="{{ $totalDue }}"
                                                step="0.01"
-                                               {{ $totalDue <= 0 ? 'disabled' : '' }}>
+                                            {{ $totalDue <= 0 ? 'disabled' : '' }}>
 
                                         @if (auth()->user()->hasRole('admin'))
                                             <button type="submit"
-                                                    class="btn btn-success btn-sm mt-2"
-                                                    {{ $totalDue <= 0 ? 'disabled' : '' }}>
+                                                    class="btn btn-success btn-sm mt-2 w-full"
+                                                {{ $totalDue <= 0 ? 'disabled' : '' }}>
                                                 Pay
                                             </button>
                                         @endif
@@ -385,12 +153,13 @@
                                     @if (auth()->user()->hasRole('admin'))
                                         <form action="{{ route('purchases.destroy', $purchase->id) }}"
                                               method="POST"
+                                              class="min-w-0"
                                               onsubmit="return confirm('আপনি কি নিশ্চিতভাবে মুছতে চান?');">
                                             @csrf
                                             @method('DELETE')
 
                                             <button type="submit"
-                                                    class="btn btn-danger btn-sm">
+                                                    class="btn btn-error btn-sm w-full">
                                                 ডিলিট
                                             </button>
                                         </form>
@@ -401,25 +170,25 @@
 
                         {{-- Totals Row --}}
                         <tr>
-                            <td colspan="7" class="p-0">
-                                <div class="customer-totals">
-                                    <div class="customer-total-item">
+                            <td colspan="7" class="whitespace-normal">
+                                <div class="bg-base-200 rounded-lg p-3 sm:p-4 flex flex-col md:flex-row justify-around items-start md:items-center gap-3 font-semibold w-full min-w-0">
+                                    <div class="max-w-full" style="overflow-wrap:anywhere;">
                                         মোট মূল্য:
-                                        <span class="fw-bold">
+                                        <span class="font-bold">
                                             {{ number_format($grandTotalPrice, 2) }} ৳
                                         </span>
                                     </div>
 
-                                    <div class="customer-total-item">
+                                    <div class="max-w-full" style="overflow-wrap:anywhere;">
                                         মোট জমা:
-                                        <span class="fw-bold">
+                                        <span class="font-bold">
                                             {{ number_format($grandTotalPaid + $grandTotalDown, 2) }} ৳
                                         </span>
                                     </div>
 
-                                    <div class="customer-total-item {{ $grandTotalDue > 0 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
-                                        মোট বাকি:
-                                        {{ number_format($grandTotalDue, 2) }} ৳
+                                    <div class="{{ $grandTotalDue > 0 ? 'text-error font-bold' : 'text-success font-bold' }} max-w-full"
+                                         style="overflow-wrap:anywhere;">
+                                        মোট বাকি: {{ number_format($grandTotalDue, 2) }} ৳
                                     </div>
                                 </div>
                             </td>
@@ -427,25 +196,26 @@
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 
     {{-- Payment History --}}
-    <div class="customer-card mb-4">
-        <div class="customer-section-title">
-            Payment History
-        </div>
+    <div class="card bg-base-100 shadow-md w-full max-w-full min-w-0">
+        <div class="card-body p-0 min-w-0">
 
-        <div class="customer-card-body">
-            <div class="customer-table-wrapper">
-                <table class="table table-striped table-hover table-bordered customer-table customer-history-table">
-                    <thead class="table-light">
-                        <tr>
+            <div class="px-3 sm:px-4 py-3 bg-primary text-primary-content font-bold text-base sm:text-lg"
+                 style="overflow-wrap:anywhere;">
+                Payment History
+            </div>
+
+            <div class="w-full max-w-full overflow-x-auto overflow-y-auto max-h-96"
+                 style="-webkit-overflow-scrolling:touch;">
+                <table class="table table-zebra w-full min-w-[420px]">
+                    <thead>
+                        <tr class="bg-base-200">
                             <th>তারিখ</th>
                             <th>পণ্য</th>
                             <th>জমা (৳)</th>
-
                             @role('admin')
                                 <th>অ্যাকশন</th>
                             @endrole
@@ -455,23 +225,23 @@
                     <tbody>
                         @forelse($paymentHistory as $payment)
                             <tr>
-                                <td class="text-nowrap">
+                                <td class="whitespace-nowrap">
                                     {{ \Carbon\Carbon::parse($payment->paid_at)->format('d M Y') }}
                                 </td>
 
-                                <td class="customer-product-name">
+                                <td style="overflow-wrap:anywhere;">
                                     {{ $payment->installment->purchase->product->product_name ?? 'N/A' }}
                                 </td>
 
-                                <td class="text-success fw-semibold text-nowrap">
+                                <td class="text-success font-semibold whitespace-nowrap">
                                     {{ number_format($payment->amount, 2) }}
                                 </td>
 
                                 @role('admin')
                                     <td>
-                                        <div class="customer-action-buttons">
+                                        <div class="flex flex-col gap-2 min-w-0">
                                             <a href="{{ route('payments.edit', $payment->id) }}"
-                                               class="btn btn-warning btn-sm">
+                                               class="btn btn-warning btn-sm w-full">
                                                 এডিট
                                             </a>
 
@@ -482,7 +252,7 @@
                                                 @method('DELETE')
 
                                                 <button type="submit"
-                                                        class="btn btn-danger btn-sm w-100">
+                                                        class="btn btn-error btn-sm w-full">
                                                     ডিলিট
                                                 </button>
                                             </form>
@@ -493,7 +263,7 @@
                         @empty
                             <tr>
                                 <td colspan="{{ auth()->user()->hasRole('admin') ? 4 : 3 }}"
-                                    class="text-center text-secondary py-4">
+                                    class="text-center text-gray-500 italic py-4 whitespace-normal">
                                     কোন পেমেন্ট পাওয়া যায়নি।
                                 </td>
                             </tr>
@@ -505,3 +275,7 @@
     </div>
 
 </div>
+
+<link href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
