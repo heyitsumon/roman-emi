@@ -174,7 +174,7 @@
         renderDashboardChart();
 
         $wire.on('dashboard-year-selected', (event) => {
-            selectedYear = event.year;
+            selectedYear = event.detail.year;
             renderDashboardChart();
         });
     })();
