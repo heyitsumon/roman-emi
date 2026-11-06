@@ -54,5 +54,13 @@ class DashboardCalculationTest extends TestCase
         $this->assertSame(200.0, (float) $data['totalProfit']);
         $this->assertSame(300.0, (float) $data['totalDue']);
         $this->assertSame(700.0, (float) $data['today']['paid']);
+
+        $chartData = $data['yearlyChartData'][now()->year];
+        $monthIndex = now()->month - 1;
+        $this->assertCount(12, $chartData['labels']);
+        $this->assertSame(1000.0, $chartData['sales'][$monthIndex]);
+        $this->assertSame(200.0, $chartData['profit'][$monthIndex]);
+        $this->assertSame(700.0, $chartData['paid'][$monthIndex]);
+        $this->assertSame(300.0, $chartData['due'][$monthIndex]);
     }
 }

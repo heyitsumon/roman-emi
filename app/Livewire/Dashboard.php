@@ -21,6 +21,11 @@ class Dashboard extends Component
         }
     }
 
+    public function updatedSelectedYear(): void
+    {
+        $this->dispatch('dashboard-year-selected', year: $this->selectedYear);
+    }
+
     public function render()
     {
         $user = auth()->user();
@@ -105,6 +110,11 @@ class Dashboard extends Component
             ->pluck('created_at')
             ->filter()
             ->map(fn ($createdAt) => $createdAt->year)
+            ->merge(
+                $payments->pluck('paid_at')
+                    ->filter()
+                    ->map(fn ($paidAt) => $paidAt->year)
+            )
             ->push(now()->year)
             ->unique()
             ->sortDesc()
@@ -146,26 +156,62 @@ class Dashboard extends Component
             'purchases' => 0,
         ];
 
-        // Chart Data (Last 6 months)
-        $chartLabels = [];
-        $customerChartData = [];
-        $purchaseChartData = [];
+        $yearlyChartData = [];
+        foreach ($annualYears as $calendarYear) {
+            $yearlyChartData[$calendarYear] = [
+                'labels' => [],
+                'sales' => array_fill(1, 12, 0.0),
+                'profit' => array_fill(1, 12, 0.0),
+                'paid' => array_fill(1, 12, 0.0),
+            ];
+            foreach (range(1, 12) as $calendarMonth) {
+                $yearlyChartData[$calendarYear]['labels'][] = Carbon::create(
+                    (int) $calendarYear,
+                    $calendarMonth,
+                    1
+                )->format('M');
+            }
+        }
 
-        for ($i = 5; $i >= 0; $i--) {
-            $chartMonth = now()->subMonths($i);
-            $chartLabels[] = $chartMonth->format('M Y');
+        foreach ($purchases as $purchase) {
+            $createdAt = $purchase->created_at;
+            if (! $createdAt || ! isset($yearlyChartData[$createdAt->year])) {
+                continue;
+            }
 
-            $customerQuery = $user
-                ? Customer::whereIn('location_id', $locationIds)
-                : Customer::query();
-            $customerChartData[] = $customerQuery
-                ->whereMonth('created_at', $chartMonth->month)
-                ->whereYear('created_at', $chartMonth->year)
-                ->count();
+            $monthIndex = $createdAt->month;
+            $yearlyChartData[$createdAt->year]['sales'][$monthIndex] += (float) $purchase->net_price;
+            $yearlyChartData[$createdAt->year]['profit'][$monthIndex] +=
+                (float) $purchase->net_price - (float) $purchase->sales_price;
+        }
 
-            $purchaseChartData[] = (clone $purchaseQuery)->whereMonth('created_at', $chartMonth->month)
-                ->whereYear('created_at', $chartMonth->year)
-                ->count();
+        foreach ($payments as $payment) {
+            $paidAt = $payment->paid_at;
+            if (! $paidAt || ! isset($yearlyChartData[$paidAt->year])) {
+                continue;
+            }
+
+            $yearlyChartData[$paidAt->year]['paid'][$paidAt->month] += (float) $payment->amount;
+        }
+
+        foreach ($yearlyChartData as $calendarYear => $chartData) {
+            $yearlyChartData[$calendarYear]['sales'] = array_values(array_map(
+                fn (float $value) => round($value, 2),
+                $chartData['sales']
+            ));
+            $yearlyChartData[$calendarYear]['profit'] = array_values(array_map(
+                fn (float $value) => round($value, 2),
+                $chartData['profit']
+            ));
+            $yearlyChartData[$calendarYear]['paid'] = array_values(array_map(
+                fn (float $value) => round($value, 2),
+                $chartData['paid']
+            ));
+            $yearlyChartData[$calendarYear]['due'] = array_map(
+                fn (float $sales, float $paid) => round(max($sales - $paid, 0), 2),
+                $yearlyChartData[$calendarYear]['sales'],
+                $yearlyChartData[$calendarYear]['paid']
+            );
         }
 
         return view('livewire.dashboard', compact(
@@ -185,9 +231,7 @@ class Dashboard extends Component
             'selectedPeriod',
             'annualData',
             'selectedAnnual',
-            'chartLabels',
-            'customerChartData',
-            'purchaseChartData'
+            'yearlyChartData'
         ));
     }
 }
